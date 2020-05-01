@@ -26,30 +26,30 @@ func TestInitGenome(t *testing.T) {
 	if layerOneNodes != 5 {
 		t.Fatalf("Expected layer one to have five nodes, got %v", layerOneNodes)
 	}
-	if layerTwoNodes != (layerOneNodes + layerThreeNodes) / 2 {
-		t.Fatalf("Expected layer two to have %v nodes, got %v",(layerOneNodes + layerThreeNodes) / 2 ,
-		layerTwoNodes)
+	if layerTwoNodes != (layerOneNodes+layerThreeNodes)/2 {
+		t.Fatalf("Expected layer two to have %v nodes, got %v", (layerOneNodes+layerThreeNodes)/2,
+			layerTwoNodes)
 	}
 	if layerThreeNodes != 3 {
 		t.Fatalf("Expected layer three to have three nodes, got %v", layerThreeNodes)
 	}
 	if len(testGenome.GetConnections()) != ((layerOneNodes * layerTwoNodes) + (layerTwoNodes * layerThreeNodes)) {
 		t.Fatalf("Expected %v connections, got %v",
-			(layerOneNodes * layerTwoNodes) + (layerTwoNodes * layerThreeNodes),
+			(layerOneNodes*layerTwoNodes)+(layerTwoNodes*layerThreeNodes),
 			len(testGenome.GetConnections()))
 	}
-	for i := 0; i < len(testGenome.GetNodes()) - 1; i++ {
-		if testGenome.GetNodes()[i].GetInnovationNumber() == testGenome.GetNodes()[i + 1].GetInnovationNumber() {
-			t.Fatalf("Expected nodes to be initialized with different innovation numbers, but node at index " +
-				"%v and %v have the same innovation number of %v", i, i + 1,
+	for i := 0; i < len(testGenome.GetNodes())-1; i++ {
+		if testGenome.GetNodes()[i].GetInnovationNumber() == testGenome.GetNodes()[i+1].GetInnovationNumber() {
+			t.Fatalf("Expected nodes to be initialized with different innovation numbers, but node at index "+
+				"%v and %v have the same innovation number of %v", i, i+1,
 				testGenome.GetNodes()[i].GetInnovationNumber())
 		}
 	}
-	for i := 0; i < len(testGenome.GetConnections()) - 1; i++ {
+	for i := 0; i < len(testGenome.GetConnections())-1; i++ {
 		if testGenome.GetConnections()[i].GetInnovationNumber() ==
-			testGenome.GetConnections()[i + 1].GetInnovationNumber() {
-			t.Fatalf("Expected connections to be initialized with different innovation numbers, but " +
-				"connections at index %v and %v have the same innovation number of %v", i, i + 1,
+			testGenome.GetConnections()[i+1].GetInnovationNumber() {
+			t.Fatalf("Expected connections to be initialized with different innovation numbers, but "+
+				"connections at index %v and %v have the same innovation number of %v", i, i+1,
 				testGenome.GetConnections()[i].GetInnovationNumber())
 		}
 	}
@@ -113,7 +113,7 @@ func TestGenome_AddNode(t *testing.T) {
 		t.Fatalf("Expected test genome innovation to have incremented to 1, but it was not.")
 	}
 	if testNode.GetInnovationNumber() != testGenome.GetInnovation() {
-		t.Fatalf("Expected added node and genome to have the same innovation number, but node has innovation " +
+		t.Fatalf("Expected added node and genome to have the same innovation number, but node has innovation "+
 			"number %v and genome has innovation number %v", testNode.GetInnovationNumber(), testGenome.GetInnovation())
 	}
 }
@@ -138,7 +138,7 @@ func TestGenome_AddConnection(t *testing.T) {
 		t.Fatalf("Expected test genome innovation to have incremented to 1, but it was not.")
 	}
 	if testConnection.GetInnovationNumber() != testGenome.GetInnovation() {
-		t.Fatalf("Expected added connection and genome to have the same innovation number, but connection has " +
+		t.Fatalf("Expected added connection and genome to have the same innovation number, but connection has "+
 			"innovation %v and genome has innovation %v",
 			testConnection.GetInnovationNumber(), testGenome.GetInnovation())
 	}
@@ -180,9 +180,9 @@ func TestGenome_AddRandomNode(t *testing.T) {
 
 	previousLength := len(testGenome.GetNodes())
 	testGenome.AddRandomNode()
-	newestNode := testGenome.GetNodes()[len(testGenome.GetNodes()) - 1]
+	newestNode := testGenome.GetNodes()[len(testGenome.GetNodes())-1]
 
-	if len(testGenome.GetNodes()) != previousLength + 1 {
+	if len(testGenome.GetNodes()) != previousLength+1 {
 		t.Fatalf("Failed adding random node: previous number of nodes was %v, current number is %v",
 			previousLength, len(testGenome.GetNodes()))
 	}
@@ -191,12 +191,12 @@ func TestGenome_AddRandomNode(t *testing.T) {
 			testGenome.GetLayers())
 	}
 	if len(newestNode.GetInwardConnections()) != 1 && len(newestNode.GetOutwardConnections()) != 1 {
-		t.Fatalf("Expected one inward and one outward connection for new node, instead got %v inward" +
+		t.Fatalf("Expected one inward and one outward connection for new node, instead got %v inward"+
 			"and %v outward connections", newestNode.GetInwardConnections(), newestNode.GetOutwardConnections())
 	}
 	if newestNode.GetInwardConnections()[0].GetNodeA().GetLayer() >= newestNode.GetLayer() ||
 		newestNode.GetOutwardConnections()[0].GetNodeB().GetLayer() <= newestNode.GetLayer() {
-		t.Fatalf("Expected new node to connect to node in previous layer and later layer, instead got " +
+		t.Fatalf("Expected new node to connect to node in previous layer and later layer, instead got "+
 			"connection to nodes in layers %v and %v, new node is in layer %v",
 			newestNode.GetInwardConnections()[0].GetNodeA().GetLayer(),
 			newestNode.GetOutwardConnections()[0].GetNodeB().GetLayer(), newestNode.GetLayer())
@@ -245,11 +245,11 @@ func TestGenome_SortNodesByLayer(t *testing.T) {
 
 	testGenome.SortNodesByLayer()
 
-	for i := 0; i < len(testGenome.GetNodes()) - 1; i++ {
-		if testGenome.GetNodes()[i].GetLayer() > testGenome.GetNodes()[i + 1].GetLayer() {
-			t.Fatalf("Expected nodes slice to be ordered by layer, but node at index %v has layer %v," +
+	for i := 0; i < len(testGenome.GetNodes())-1; i++ {
+		if testGenome.GetNodes()[i].GetLayer() > testGenome.GetNodes()[i+1].GetLayer() {
+			t.Fatalf("Expected nodes slice to be ordered by layer, but node at index %v has layer %v,"+
 				"while node at index %v has layer %v",
-				i, testGenome.GetNodes()[i].GetLayer(), i + 1, testGenome.GetNodes()[i + 1].GetLayer())
+				i, testGenome.GetNodes()[i].GetLayer(), i+1, testGenome.GetNodes()[i+1].GetLayer())
 		}
 	}
 }
@@ -285,10 +285,10 @@ func TestGenome_GetNodesWithLayer(t *testing.T) {
 			t.Fatalf("Node at index %v in layerThreeNodes has layer %v", i, layerThreeNodes)
 		}
 	}
-	if testGenome.GetNodesWithLayer(testGenome.GetLayers() + 1) != nil {
-		t.Fatalf("Expected GetNodesWithLayer to return nil if input is greater than number of layers, but " +
+	if testGenome.GetNodesWithLayer(testGenome.GetLayers()+1) != nil {
+		t.Fatalf("Expected GetNodesWithLayer to return nil if input is greater than number of layers, but "+
 			"returned non-nil when given %v, even though genome has %v layers.",
-			testGenome.GetLayers() + 1, testGenome.GetLayers())
+			testGenome.GetLayers()+1, testGenome.GetLayers())
 	}
 }
 
@@ -301,17 +301,17 @@ func TestGenome_FeedForward(t *testing.T) {
 
 	for i := range finalLayerNodes {
 		if finalLayerNodes[i].GetWeight() == 0 {
-			t.Fatalf("Expected final layer nodes to have a non-zero weight between -1 and 1, but node at index " +
+			t.Fatalf("Expected final layer nodes to have a non-zero weight between -1 and 1, but node at index "+
 				"%v has weight %v", i, finalLayerNodes[i].GetWeight())
 		}
 	}
 	for i := range testGenome.GetNodes() {
 		if testGenome.GetNodes()[i].GetWeight() < 0 && testGenome.GetNodes()[i].IsActivated() {
-			t.Fatalf("Expected nodes with weight less than 0 to be deactivated, but node at index %v has weight" +
+			t.Fatalf("Expected nodes with weight less than 0 to be deactivated, but node at index %v has weight"+
 				"%v and is still activated.", i, testGenome.GetNodes()[i].GetWeight())
 		}
 		if testGenome.GetNodes()[i].GetWeight() > 0 && !testGenome.GetNodes()[i].IsActivated() {
-			t.Fatalf("Expected nodes with weight greater than 0 to be activated, but node at index %v has weight" +
+			t.Fatalf("Expected nodes with weight greater than 0 to be activated, but node at index %v has weight"+
 				"%v and is deactivated.", i, testGenome.GetNodes()[i].GetWeight())
 		}
 	}
@@ -329,7 +329,7 @@ func TestGenome_IncrementInnovation(t *testing.T) {
 	testGenome := Genome{innovationCounter: 5}
 	testGenome.IncrementInnovation()
 	if testGenome.GetInnovation() != 6 {
-		t.Fatalf("Expected innovation counter to have value %v, but got %v.", testGenome.innovationCounter + 1,
+		t.Fatalf("Expected innovation counter to have value %v, but got %v.", testGenome.innovationCounter+1,
 			testGenome.GetInnovation())
 	}
 }
@@ -347,28 +347,28 @@ func TestGenome_Clone(t *testing.T) {
 	copyGenome := testGenome.Clone()
 
 	if copyGenome.GetInnovation() != testGenome.GetInnovation() {
-		t.Fatalf("Expected copy genome to have the same innovation as test genome, but copy genome has " +
+		t.Fatalf("Expected copy genome to have the same innovation as test genome, but copy genome has "+
 			"innovation value %v and test genome has innovation value %v", testGenome.GetInnovation(),
 			copyGenome.GetInnovation())
 	}
 	if copyGenome.GetLayers() != testGenome.GetLayers() {
-		t.Fatalf("Expected copy genome to have the same number of layers as test genome, but copy genome has " +
+		t.Fatalf("Expected copy genome to have the same number of layers as test genome, but copy genome has "+
 			"%v while test genome has %v", copyGenome.GetLayers(), testGenome.GetLayers())
 	}
 	if len(copyGenome.GetNodes()) != len(testGenome.GetNodes()) {
-		t.Fatalf("Expected copy genome to have the same number of nodes as test genome, but copy genome has " +
+		t.Fatalf("Expected copy genome to have the same number of nodes as test genome, but copy genome has "+
 			"%v nodes while test genome has %v", len(copyGenome.GetNodes()), len(testGenome.GetNodes()))
 	}
 	if len(copyGenome.GetConnections()) != len(testGenome.GetConnections()) {
-		t.Fatalf("Expected copy genome to have the same number of connections as test genome, but copy genome " +
+		t.Fatalf("Expected copy genome to have the same number of connections as test genome, but copy genome "+
 			"has %v connectinos while test genome has %v",
 			len(copyGenome.GetConnections()), len(testGenome.GetConnections()))
 	}
 	for i := range copyGenome.GetNodes() {
 		if len(copyGenome.GetNodes()[i].GetOutwardConnections()) !=
 			len(testGenome.GetNodes()[i].GetOutwardConnections()) {
-			t.Fatalf("Expected each node in copy genome to have the same number of outward connections as the " +
-				"corresponding node in test genome, but node at index %v has %v outward connections in copy genome, " +
+			t.Fatalf("Expected each node in copy genome to have the same number of outward connections as the "+
+				"corresponding node in test genome, but node at index %v has %v outward connections in copy genome, "+
 				"while node at index %v has %v outward connections in test genome.",
 				i, len(copyGenome.GetNodes()[i].GetOutwardConnections()),
 				i, len(testGenome.GetNodes()[i].GetOutwardConnections()))
@@ -377,8 +377,8 @@ func TestGenome_Clone(t *testing.T) {
 	for i := range copyGenome.GetNodes() {
 		if len(copyGenome.GetNodes()[i].GetInwardConnections()) !=
 			len(testGenome.GetNodes()[i].GetInwardConnections()) {
-			t.Fatalf("Expected each node in copy genome to have the same number of inward connections as the " +
-				"corresponding node in test genome, but node at index %v has %v inward connections in copy genome, " +
+			t.Fatalf("Expected each node in copy genome to have the same number of inward connections as the "+
+				"corresponding node in test genome, but node at index %v has %v inward connections in copy genome, "+
 				"while node at index %v has %v inward connections in test genome.",
 				i, len(copyGenome.GetNodes()[i].GetInwardConnections()),
 				i, len(testGenome.GetNodes()[i].GetInwardConnections()))
@@ -409,7 +409,7 @@ func TestConnectionIndex(t *testing.T) {
 
 	testConnectionsTwo := []*Connection{{}}
 	if ConnectionIndex(testConnectionsTwo, testConnection) != -1 {
-		t.Fatalf("Expected connection index to return -1 when searching for node which was not in slice, but " +
+		t.Fatalf("Expected connection index to return -1 when searching for node which was not in slice, but "+
 			"got %v", ConnectionIndex(testConnections, testConnection))
 	}
 }
@@ -423,7 +423,7 @@ func TestGenome_TakeInput(t *testing.T) {
 	inputNodes := testGenome.GetNodesWithLayer(1)
 	for i := range inputNodes {
 		if inputNodes[i].GetWeight() != testInputs[i] {
-			t.Fatalf("Expected input nodes to match given input, but input at index %v has value %v while " +
+			t.Fatalf("Expected input nodes to match given input, but input at index %v has value %v while "+
 				"input node at index %v has value %v", i, inputNodes[i].GetWeight(), i, testInputs[i])
 		}
 	}
@@ -455,7 +455,7 @@ func TestGenome_GetOutputs(t *testing.T) {
 	testGenome := InitGenome(5, 3)
 	testGenome.FeedForward()
 	if len(testGenome.GetOutputs()) != len(testGenome.GetNodesWithLayer(testGenome.GetLayers())) {
-		t.Fatalf("Expected output array to have the same length as final layer size, but output array has " +
+		t.Fatalf("Expected output array to have the same length as final layer size, but output array has "+
 			"%v while final layer has %v nodes", len(testGenome.GetOutputs()),
 			len(testGenome.GetNodesWithLayer(testGenome.GetLayers())))
 	}
@@ -464,6 +464,7 @@ func TestGenome_GetOutputs(t *testing.T) {
 func TestGenome_Mutate(t *testing.T) {
 	testGenome := InitGenome(5, 3)
 	testGenomeClone := testGenome.Clone()
+	testGenome.SetMutability(true)
 	testGenome.Mutate()
 	testGenome.FeedForward()
 	testGenomeClone.FeedForward()
@@ -475,8 +476,16 @@ func TestGenome_Mutate(t *testing.T) {
 		genomesDifferent = testGenomeOutputs[i] != testGenomeCloneOutputs[i]
 	}
 	if !genomesDifferent {
-		t.Fatalf("Expected different output arrays after mutating, but both genomes have the same output " +
+		t.Fatalf("Expected different output arrays after mutating, but both genomes have the same output "+
 			"weights: %v and %v", testGenomeOutputs, testGenomeCloneOutputs)
+	}
+}
+
+func TestGenome_CantMutateIfImmutable(t *testing.T) {
+	testGenome := InitGenome(5, 3)
+	testGenome.SetMutability(false)
+	if testGenome.Mutate() != 0 {
+		t.Fatalf("Expected test genome to be unable to mutate, but it did.")
 	}
 }
 
@@ -536,5 +545,20 @@ func TestGenome_HandleDisjointNodes(t *testing.T) {
 	testGenome.HandleDisjointNodes()
 	if !testNodeA.IsConnectedTo(testNodeB) {
 		t.Fatalf("Expected test node a to be connected to test node b, but it was not.")
+	}
+}
+
+func TestGenome_GetMutability(t *testing.T) {
+	testGenome := &Genome{mutable: true}
+	if testGenome.IsMutable() != testGenome.mutable {
+		t.Fatalf("Expected test genome to be mutable, but it is not.")
+	}
+}
+
+func TestGenome_SetMutability(t *testing.T) {
+	testGenome := &Genome{mutable: true}
+	testGenome.SetMutability(false)
+	if testGenome.IsMutable() {
+		t.Fatalf("Expected test genome to be immutable, but it is not.")
 	}
 }

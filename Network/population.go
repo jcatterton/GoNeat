@@ -1,19 +1,20 @@
 package Network
 
 type Population struct {
-	species			[]*Species
-	generation		int
-	grandChampion	*Genome
-	totalInputs		int
-	totalOutputs	int
+	species       []*Species
+	generation    int
+	grandChampion *Genome
+	totalInputs   int
+	totalOutputs  int
+	fitnessCap    float64
 }
 
 func InitPopulation(i int, o int) *Population {
 	newSpecies := []*Species{}
-	for i := 0; i < 5; i++ {
+	for j := 0; j < 5; j++ {
 		newSpecies = append(newSpecies, InitSpecies(i, o, 0))
 	}
-	newPopulation := &Population{totalInputs: i, totalOutputs: i, generation: 0, species: newSpecies}
+	newPopulation := &Population{totalInputs: i, totalOutputs: o, generation: 0, species: newSpecies}
 	return newPopulation
 }
 
@@ -38,11 +39,21 @@ func (p *Population) GetGrandChampion() *Genome {
 }
 
 func (p *Population) SetGrandChampion() {
-	fitnessCap := 0.0
+	if p.grandChampion == nil {
+		p.grandChampion = p.GetAllGenomes()[0]
+		p.fitnessCap = p.grandChampion.GetFitness()
+	}
+	p.grandChampion.SetMutability(false)
+
 	for i := range p.GetSpecies() {
 		p.GetSpecies()[i].SetChampion()
-		if p.GetSpecies()[i].GetChampion().GetFitness() > fitnessCap {
+	}
+	for i := range p.GetSpecies() {
+		if p.GetSpecies()[i].GetChampion().GetFitness() > p.fitnessCap {
+			p.grandChampion.SetMutability(true)
 			p.grandChampion = p.GetSpecies()[i].GetChampion()
+			p.fitnessCap = p.grandChampion.GetFitness()
+			p.grandChampion.SetMutability(false)
 		}
 	}
 }
@@ -55,11 +66,19 @@ func (p *Population) GetTotalOutputs() int {
 	return p.totalOutputs
 }
 
+func (p *Population) GetFitnessCap() float64 {
+	return p.fitnessCap
+}
+
+func (p *Population) SetFitnessCap(f float64) {
+	p.fitnessCap = f
+}
+
 func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
 		if p.GetSpecies()[i].GetStagnation() > 10 {
-			copy(p.species[i:], p.species[i + 1:])
-			p.species = p.species[:len(p.species) - 1]
+			copy(p.species[i:], p.species[i+1:])
+			p.species = p.species[:len(p.species)-1]
 			p.species = append(p.species, InitSpecies(p.GetTotalInputs(), p.GetTotalOutputs(), p.GetGeneration()))
 		}
 	}

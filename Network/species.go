@@ -7,12 +7,12 @@ import (
 )
 
 type Species struct {
-	genomes				[]*Genome
-	generation			int
-	stagnation			int
-	champion			*Genome
-	fitnessCap			float64
-	innovationCounter 	int
+	genomes           []*Genome
+	generation        int
+	stagnation        int
+	champion          *Genome
+	fitnessCap        float64
+	innovationCounter int
 }
 
 func InitSpecies(i int, o int, g int) *Species {
@@ -59,16 +59,21 @@ func (s *Species) GetChampion() *Genome {
 func (s *Species) SetChampion() {
 	if s.GetChampion() == nil {
 		s.champion = s.GetGenomes()[0]
+		s.fitnessCap = s.champion.GetFitness()
 	}
-	highestFitness := 0.0
+	s.champion.SetMutability(false)
+
+	originalFitnessCap := s.fitnessCap
 	for i := range s.GetGenomes() {
-		if s.GetGenomes()[i].GetFitness() > highestFitness {
-			highestFitness = s.GetGenomes()[i].GetFitness()
+		if s.GetGenomes()[i].GetFitness() > s.fitnessCap {
+			s.champion.SetMutability(true)
+			s.fitnessCap = s.GetGenomes()[i].GetFitness()
 			s.champion = s.GetGenomes()[i]
+			s.champion.SetMutability(false)
 		}
 	}
-	if s.GetChampion().GetFitness() > s.GetFitnessCap() {
-		s.SetFitnessCap(s.GetChampion().GetFitness())
+
+	if s.fitnessCap > originalFitnessCap {
 		s.ResetStagnation()
 	} else {
 		s.IncrementStagnation()
@@ -108,17 +113,16 @@ func (s *Species) InitializeInnovation() {
 func (s *Species) Mutate() {
 	s.SetChampion()
 	for g := range s.GetGenomes() {
-		if s.GetGenomes()[g] != s.GetChampion() {
-			s.SetInnovationCounter(s.GetInnovationCounter() + s.GetGenomes()[g].Mutate())
-			for g1 := range s.GetGenomes() {
-				s.GetGenomes()[g1].SetInnovationCounter(s.GetInnovationCounter())
-			}
+		s.SetInnovationCounter(s.GetInnovationCounter() + s.GetGenomes()[g].Mutate())
+		for g1 := range s.GetGenomes() {
+			s.GetGenomes()[g1].SetInnovationCounter(s.GetInnovationCounter())
 		}
 	}
 	s.IncrementGeneration()
 }
 
 func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
+	//TODO: breed genomes continues to be a bitch
 	fittestParent := &Genome{}
 	worstParent := &Genome{}
 
@@ -131,7 +135,6 @@ func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
 	}
 	child := &Genome{}
 
-	//TODO: Figure out how to do this
 	for i := range fittestParent.GetNodesWithLayer(1) {
 		child.AddNodeWithoutIncrement(fittestParent.GetNodesWithLayer(1)[i].Clone())
 	}
@@ -141,11 +144,12 @@ func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
 	for i := range fittestParent.GetHiddenNodes() {
 		newNode := Node{}
 		if NodeInnovationIndex(worstParent.GetHiddenNodes(), fittestParent.GetHiddenNodes()[i]) != -1 && i <
-			len(worstParent.GetHiddenNodes()){
+			len(worstParent.GetHiddenNodes()) {
 			if rand.Float64() >= 0.5 {
 				newNode = *fittestParent.GetHiddenNodes()[i].Clone()
 			} else {
-				newNode = *worstParent.GetHiddenNodes()[i].Clone()
+				newNode = *worstParent.GetHiddenNodes()[NodeInnovationIndex(worstParent.GetHiddenNodes(),
+					fittestParent.GetHiddenNodes()[i])].Clone()
 			}
 		} else {
 			newNode = *fittestParent.GetHiddenNodes()[i].Clone()
@@ -153,13 +157,13 @@ func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
 		newNode.ClearInwardConnections()
 		newNode.ClearOutwardConnections()
 		child.AddNodeWithoutIncrement(&newNode)
+	}
 
-		totalLayers := 0
-		for i := range child.GetNodes() {
-			if child.GetNodes()[i].GetLayer() > totalLayers {
-				totalLayers = child.GetNodes()[i].GetLayer()
-				child.SetLayers(totalLayers)
-			}
+	totalLayers := 0
+	for i := range child.GetNodes() {
+		if child.GetNodes()[i].GetLayer() > totalLayers {
+			totalLayers = child.GetNodes()[i].GetLayer()
+			child.SetLayers(totalLayers)
 		}
 	}
 
@@ -203,7 +207,7 @@ func (s *Species) OrderByFitness() {
 }
 
 func (s *Species) CullTheWeak() {
-	weaklingCounter := len(s.GetGenomes())/3
+	weaklingCounter := len(s.GetGenomes()) / 3
 	s.OrderByFitness()
 	s.genomes = s.genomes[weaklingCounter:]
 

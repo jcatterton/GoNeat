@@ -10,11 +10,12 @@ import (
 )
 
 type Genome struct {
-	nodes				[]*Node
-	connections			[]*Connection
-	layers				int
-	innovationCounter	int
-	fitness				float64
+	nodes             []*Node
+	connections       []*Connection
+	layers            int
+	innovationCounter int
+	fitness           float64
+	mutable           bool
 }
 
 func InitGenome(input int, output int) *Genome {
@@ -28,14 +29,14 @@ func InitGenome(input int, output int) *Genome {
 		initNodes = append(initNodes, &Node{layer: 3, innovationNumber: innovationCounter})
 		innovationCounter = innovationCounter + 1
 	}
-	for i := 0; i < (input + output)/2; i++ {
+	for i := 0; i < (input+output)/2; i++ {
 		initNodes = append(initNodes, &Node{layer: 2, innovationNumber: innovationCounter})
 		innovationCounter = innovationCounter + 1
 	}
 	initConnections := []*Connection{}
 	for i := range initNodes {
 		for j := range initNodes {
-			if initNodes[j].GetLayer() - initNodes[i].GetLayer() == 1 {
+			if initNodes[j].GetLayer()-initNodes[i].GetLayer() == 1 {
 				newConnection := Connection{innovationNumber: 0}
 				newConnection.SetNodeA(initNodes[i])
 				newConnection.SetNodeB(initNodes[j])
@@ -50,7 +51,7 @@ func InitGenome(input int, output int) *Genome {
 		}
 	}
 	return &Genome{nodes: initNodes, connections: initConnections, layers: 3, innovationCounter: innovationCounter,
-		fitness: 0}
+		fitness: 0, mutable: true}
 }
 
 func (g *Genome) GetNodes() []*Node {
@@ -123,7 +124,7 @@ func (g *Genome) DecrementLayers() {
 	g.layers = g.layers - 1
 }
 
-func (g* Genome) SetLayers(l int) {
+func (g *Genome) SetLayers(l int) {
 	g.layers = l
 }
 
@@ -136,7 +137,7 @@ func (g *Genome) AddRandomNode() {
 	newNode := Node{innovationNumber: g.GetInnovation() + 1}
 	newConnection := Connection{innovationNumber: g.GetInnovation() + 2, weight: (rand.Float64() * 2) - 1}
 
-	if randomConnection.GetNodeB().GetLayer() - randomConnection.GetNodeA().GetLayer() == 1 {
+	if randomConnection.GetNodeB().GetLayer()-randomConnection.GetNodeA().GetLayer() == 1 {
 		tempLayer := randomConnection.GetNodeB().GetLayer()
 		for i := range g.GetNodes() {
 			if g.GetNodes()[i].GetLayer() >= tempLayer {
@@ -144,7 +145,8 @@ func (g *Genome) AddRandomNode() {
 			}
 		}
 		g.IncrementLayers()
-	} else if randomConnection.GetNodeB().GetLayer() - randomConnection.GetNodeA().GetLayer() < 1 {
+	} else if randomConnection.GetNodeB().GetLayer()-randomConnection.GetNodeA().GetLayer() < 1 {
+		DrawGenome(g)
 		log.Fatalf("Connection has NodeA with layer %v which is not less than NodeB with layer %v",
 			randomConnection.GetNodeA().GetLayer(), randomConnection.GetNodeB().GetLayer())
 	}
@@ -173,7 +175,7 @@ func (g *Genome) AddRandomConnection() {
 	rand.Seed(time.Now().UTC().UnixNano())
 	randomNodeA := g.GetNodes()[rand.Intn(len(g.GetNodes()))]
 	randomNodeB := g.GetNodes()[rand.Intn(len(g.GetNodes()))]
-	for (randomNodeA.GetLayer() >= randomNodeB.GetLayer()) || randomNodeA.IsConnectedTo(randomNodeB){
+	for (randomNodeA.GetLayer() >= randomNodeB.GetLayer()) || randomNodeA.IsConnectedTo(randomNodeB) {
 		rand.Seed(time.Now().UTC().UnixNano())
 		randomNodeA = g.GetNodes()[rand.Intn(len(g.GetNodes()))]
 		rand.Seed(time.Now().UTC().UnixNano())
@@ -184,7 +186,6 @@ func (g *Genome) AddRandomConnection() {
 		innovationNumber: g.GetInnovation() + 1}
 	randomNodeA.AddToOutwardConnections(&newConnection)
 	randomNodeB.AddToInwardConnections(&newConnection)
-	log.Printf("Adding connection from node %v to %v", newConnection.GetNodeA().GetInnovationNumber(), newConnection.GetNodeB().GetInnovationNumber())
 	g.AddConnection(&newConnection)
 }
 
@@ -288,7 +289,7 @@ func (g *Genome) Clone() *Genome {
 	}
 
 	newGenome := &Genome{nodes: newNodes, connections: newConnections, layers: g.GetLayers(),
-		innovationCounter: g.GetInnovation()}
+		innovationCounter: g.GetInnovation(), mutable: g.IsMutable()}
 
 	return newGenome
 }
@@ -331,17 +332,25 @@ func ConnectionInnovationIndex(connections []*Connection, connection *Connection
 
 func (g *Genome) TakeInput(input []float64) error {
 	inputNodes := g.GetNodesWithLayer(1)
+	sort.Slice(inputNodes, func(i, j int) bool {
+		return inputNodes[i].GetInnovationNumber() < inputNodes[j].GetInnovationNumber()
+	})
+
 	if len(input) != len(inputNodes) {
 		return errors.New(fmt.Sprintf("Invalid number of inputs. Got %v, expected %v.",
-			input, len(inputNodes)))
+			len(input), len(inputNodes)))
 	}
 	for i := range inputNodes {
-		g.GetNodes()[NodeIndex(g.GetNodes(), inputNodes[i])].SetWeight(input[i])
+		g.GetNodes()[NodeInnovationIndex(g.GetNodes(), inputNodes[i])].SetWeight(input[i])
 	}
 	return nil
 }
 
 func (g *Genome) Mutate() int {
+	if !g.IsMutable() {
+		return 0
+	}
+
 	changes := 0
 	for i := range g.GetConnections() {
 		rand.Seed(time.Now().UTC().UnixNano())
@@ -359,9 +368,6 @@ func (g *Genome) Mutate() int {
 	if rand.Float64() >= 0.75 {
 		g.AddRandomNode()
 		changes = changes + 2
-	}
-	if changes == 0 {
-		changes = g.Mutate()
 	}
 	return changes
 }
@@ -395,7 +401,7 @@ func (g *Genome) HandleDisjointNodes() {
 			newConnection = &Connection{
 				nodeA: g.GetNodesWithLayerLessThan(g.GetNodes()[i].
 					GetLayer())[rand.Intn(len(g.GetNodesWithLayerLessThan(g.GetNodes()[i].GetLayer())))],
-				nodeB: g.GetNodes()[i],
+				nodeB:  g.GetNodes()[i],
 				weight: (rand.Float64() * 2) - 1,
 			}
 			newConnection.GetNodeA().AddToOutwardConnections(newConnection)
@@ -406,7 +412,7 @@ func (g *Genome) HandleDisjointNodes() {
 			newConnection = &Connection{
 				nodeA: g.GetNodes()[i],
 				nodeB: g.GetNodesWithLayerGreaterThan(g.GetNodes()[i].
-				GetLayer())[rand.Intn(len(g.GetNodesWithLayerGreaterThan(g.GetNodes()[i].GetLayer())))],
+					GetLayer())[rand.Intn(len(g.GetNodesWithLayerGreaterThan(g.GetNodes()[i].GetLayer())))],
 				weight: (rand.Float64() * 2) - 1,
 			}
 			newConnection.GetNodeA().AddToOutwardConnections(newConnection)
@@ -414,4 +420,12 @@ func (g *Genome) HandleDisjointNodes() {
 			g.AddConnection(newConnection)
 		}
 	}
+}
+
+func (g *Genome) IsMutable() bool {
+	return g.mutable
+}
+
+func (g *Genome) SetMutability(m bool) {
+	g.mutable = m
 }
