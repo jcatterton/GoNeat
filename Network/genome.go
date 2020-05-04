@@ -18,6 +18,10 @@ type Genome struct {
 	mutable           bool
 }
 
+func CreateGenome(nodes []*Node, connections []*Connection, layers int, innovation int, fitness float64, mutable bool) *Genome {
+	return &Genome{nodes, connections, layers, innovation, fitness, mutable}
+}
+
 func InitGenome(input int, output int) *Genome {
 	initNodes := []*Node{}
 	innovationCounter := 0

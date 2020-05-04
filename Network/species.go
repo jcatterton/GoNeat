@@ -75,8 +75,6 @@ func (s *Species) SetChampion() {
 
 	if s.fitnessCap > originalFitnessCap {
 		s.ResetStagnation()
-	} else {
-		s.IncrementStagnation()
 	}
 }
 
@@ -118,11 +116,11 @@ func (s *Species) Mutate() {
 			s.GetGenomes()[g1].SetInnovationCounter(s.GetInnovationCounter())
 		}
 	}
+	s.IncrementStagnation()
 	s.IncrementGeneration()
 }
 
 func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
-	//TODO: breed genomes continues to be a bitch
 	fittestParent := &Genome{}
 	worstParent := &Genome{}
 
@@ -133,62 +131,18 @@ func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
 		fittestParent = g2.Clone()
 		worstParent = g1.Clone()
 	}
-	child := &Genome{}
-
-	for i := range fittestParent.GetNodesWithLayer(1) {
-		child.AddNodeWithoutIncrement(fittestParent.GetNodesWithLayer(1)[i].Clone())
-	}
-	for i := range fittestParent.GetNodesWithLayer(fittestParent.GetLayers()) {
-		child.AddNodeWithoutIncrement(fittestParent.GetNodesWithLayer(fittestParent.GetLayers())[i].Clone())
-	}
-	for i := range fittestParent.GetHiddenNodes() {
-		newNode := Node{}
-		if NodeInnovationIndex(worstParent.GetHiddenNodes(), fittestParent.GetHiddenNodes()[i]) != -1 && i <
-			len(worstParent.GetHiddenNodes()) {
-			if rand.Float64() >= 0.5 {
-				newNode = *fittestParent.GetHiddenNodes()[i].Clone()
-			} else {
-				newNode = *worstParent.GetHiddenNodes()[NodeInnovationIndex(worstParent.GetHiddenNodes(),
-					fittestParent.GetHiddenNodes()[i])].Clone()
-			}
-		} else {
-			newNode = *fittestParent.GetHiddenNodes()[i].Clone()
-		}
-		newNode.ClearInwardConnections()
-		newNode.ClearOutwardConnections()
-		child.AddNodeWithoutIncrement(&newNode)
-	}
-
-	totalLayers := 0
-	for i := range child.GetNodes() {
-		if child.GetNodes()[i].GetLayer() > totalLayers {
-			totalLayers = child.GetNodes()[i].GetLayer()
-			child.SetLayers(totalLayers)
-		}
-	}
-
-	for i := range fittestParent.GetConnections() {
-		if NodeInnovationIndex(child.GetNodes(), fittestParent.GetConnections()[i].GetNodeA()) != -1 &&
-			NodeInnovationIndex(child.GetNodes(), fittestParent.GetConnections()[i].GetNodeB()) != -1 {
-			newConnection := fittestParent.GetConnections()[i].Clone()
-			newConnection.SetNodeA(child.GetNodes()[NodeInnovationIndex(child.GetNodes(),
-				fittestParent.GetConnections()[i].GetNodeA())])
-			newConnection.SetNodeB(child.GetNodes()[NodeInnovationIndex(child.GetNodes(),
-				fittestParent.GetConnections()[i].GetNodeB())])
-			newConnection.GetNodeA().AddToOutwardConnections(newConnection)
-			newConnection.GetNodeB().AddToInwardConnections(newConnection)
-			child.AddConnection(newConnection)
-		}
-	}
+	child := &Genome{nodes: fittestParent.GetNodes(), connections: fittestParent.GetConnections()}
 	for i := range worstParent.GetConnections() {
-		if NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeA()) != -1 &&
-			NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeB()) != -1 {
-			if !child.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeA())].IsConnectedTo(
-				child.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeB())]) {
+		if NodeInnovationIndex(fittestParent.GetNodes(), worstParent.GetConnections()[i].GetNodeA()) != -1 &&
+			NodeInnovationIndex(fittestParent.GetNodes(), worstParent.GetConnections()[i].GetNodeB()) != -1 {
+			if !fittestParent.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeA())].
+				IsConnectedTo(fittestParent.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeB())]) &&
+				child.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeA())].GetLayer() <
+					child.GetNodes()[NodeInnovationIndex(child.GetNodes(), worstParent.GetConnections()[i].GetNodeB())].GetLayer() {
 				newConnection := worstParent.GetConnections()[i].Clone()
-				newConnection.SetNodeA(child.GetNodes()[NodeInnovationIndex(child.GetNodes(),
+				newConnection.SetNodeA(fittestParent.GetNodes()[NodeInnovationIndex(fittestParent.GetNodes(),
 					worstParent.GetConnections()[i].GetNodeA())])
-				newConnection.SetNodeB(child.GetNodes()[NodeInnovationIndex(child.GetNodes(),
+				newConnection.SetNodeB(fittestParent.GetNodes()[NodeInnovationIndex(fittestParent.GetNodes(),
 					worstParent.GetConnections()[i].GetNodeB())])
 				newConnection.GetNodeA().AddToOutwardConnections(newConnection)
 				newConnection.GetNodeB().AddToInwardConnections(newConnection)
@@ -196,7 +150,11 @@ func BreedGenomes(g1 *Genome, g2 *Genome) *Genome {
 			}
 		}
 	}
-	child.HandleDisjointNodes()
+
+	child.SetLayers(fittestParent.GetLayers())
+	child.SetMutability(true)
+	child.SetInnovationCounter(fittestParent.GetInnovation())
+
 	return child
 }
 
@@ -209,17 +167,18 @@ func (s *Species) OrderByFitness() {
 func (s *Species) CullTheWeak() {
 	weaklingCounter := len(s.GetGenomes()) / 3
 	s.OrderByFitness()
+
 	s.genomes = s.genomes[weaklingCounter:]
 
 	newGenomes := []*Genome{}
 	for i := 0; i < weaklingCounter; i++ {
-		newGenomes = append(newGenomes, s.breedRandomGenomes())
+		newGenomes = append(newGenomes, s.BreedRandomGenomes())
 	}
 
 	s.genomes = append(s.genomes, newGenomes...)
 }
 
-func (s *Species) breedRandomGenomes() *Genome {
+func (s *Species) BreedRandomGenomes() *Genome {
 	if len(s.genomes) == 1 {
 		return s.genomes[0].Clone()
 	}

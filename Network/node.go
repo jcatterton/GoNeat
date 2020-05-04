@@ -5,12 +5,16 @@ import (
 )
 
 type Node struct {
-	activated			bool
-	layer				int
-	outwardConnections	[]*Connection
-	inwardConnections	[]*Connection
-	weight				float64
-	innovationNumber	int
+	activated          bool
+	layer              int
+	outwardConnections []*Connection
+	inwardConnections  []*Connection
+	weight             float64
+	innovationNumber   int
+}
+
+func CreateNode(activated bool, layer int, outwardConnections []*Connection, inwardConnections []*Connection, weight float64, innovation int) *Node {
+	return &Node{activated, layer, outwardConnections, inwardConnections, weight, innovation}
 }
 
 func (n *Node) IsActivated() bool {
@@ -25,7 +29,7 @@ func (n *Node) Deactivate() {
 	n.activated = false
 }
 
-func (n* Node) GetOutwardConnections() []*Connection {
+func (n *Node) GetOutwardConnections() []*Connection {
 	return n.outwardConnections
 }
 
@@ -44,9 +48,9 @@ func (n *Node) AddToInwardConnections(c *Connection) {
 func (n *Node) RemoveFromOutwardConnections(c *Connection) int {
 	for i := range n.outwardConnections {
 		if n.outwardConnections[i] == c {
-			n.outwardConnections[len(n.outwardConnections) - 1], n.outwardConnections[i] =
-				n.outwardConnections[i], n.outwardConnections[len(n.outwardConnections) - 1]
-			n.outwardConnections = n.outwardConnections[:len(n.outwardConnections) - 1]
+			n.outwardConnections[len(n.outwardConnections)-1], n.outwardConnections[i] =
+				n.outwardConnections[i], n.outwardConnections[len(n.outwardConnections)-1]
+			n.outwardConnections = n.outwardConnections[:len(n.outwardConnections)-1]
 			return 1
 		}
 	}
@@ -56,9 +60,9 @@ func (n *Node) RemoveFromOutwardConnections(c *Connection) int {
 func (n *Node) RemoveFromInwardConnections(c *Connection) int {
 	for i := range n.inwardConnections {
 		if n.inwardConnections[i] == c {
-			n.inwardConnections[len(n.inwardConnections) - 1], n.inwardConnections[i] =
-				n.inwardConnections[i], n.inwardConnections[len(n.inwardConnections) - 1]
-			n.inwardConnections = n.inwardConnections[:len(n.inwardConnections) - 1]
+			n.inwardConnections[len(n.inwardConnections)-1], n.inwardConnections[i] =
+				n.inwardConnections[i], n.inwardConnections[len(n.inwardConnections)-1]
+			n.inwardConnections = n.inwardConnections[:len(n.inwardConnections)-1]
 			return 1
 		}
 	}
@@ -90,7 +94,8 @@ func (n *Node) SetInnovationNumber(i int) {
 }
 
 func (n *Node) Sigmoid() {
-	if 1/(1 + math.Exp(n.GetWeight() * -4.9)) < 0.5 {
+	n.weight = 1 / (1 + math.Exp(n.GetWeight()*-4.9))
+	if n.weight < 0.5 {
 		n.Deactivate()
 	} else {
 		n.Activate()
@@ -124,5 +129,3 @@ func (n *Node) Clone() *Node {
 		innovationNumber: n.GetInnovationNumber()}
 	return newNode
 }
-
-

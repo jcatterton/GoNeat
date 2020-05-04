@@ -1,5 +1,7 @@
 package Network
 
+import "sort"
+
 type Population struct {
 	species       []*Species
 	generation    int
@@ -76,10 +78,22 @@ func (p *Population) SetFitnessCap(f float64) {
 
 func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
-		if p.GetSpecies()[i].GetStagnation() > 10 {
-			copy(p.species[i:], p.species[i+1:])
-			p.species = p.species[:len(p.species)-1]
-			p.species = append(p.species, InitSpecies(p.GetTotalInputs(), p.GetTotalOutputs(), p.GetGeneration()))
+		if p.GetSpecies()[i].GetStagnation() > 20 {
+			newSpecies := &Species{stagnation: 0}
+			for i := range p.GetSpecies() {
+				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
+				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
+			}
+
+			newSpecies.SetFitnessCap(0)
+
+			sort.Slice(newSpecies.GetGenomes(), func(i, j int) bool {
+				return newSpecies.GetGenomes()[i].GetInnovation() > newSpecies.GetGenomes()[j].GetInnovation()
+			})
+
+			newSpecies.SetInnovationCounter(newSpecies.GetGenomes()[0].GetInnovation())
+
+			p.GetSpecies()[i] = newSpecies
 		}
 	}
 }

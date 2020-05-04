@@ -7,6 +7,7 @@ import (
 
 func main() {
 	pop := Network.InitPopulation(5, 3)
+	log.Println(len(pop.GetAllGenomes()))
 	inputs := []float64{-1, -0.5, 0, 0.5, 1}
 	for x := 0; x < 100; x++ {
 		for i := range pop.GetAllGenomes() {
@@ -20,11 +21,10 @@ func main() {
 			}
 			pop.GetAllGenomes()[i].SetFitness(outputSum)
 		}
+		pop.ExtinctionEvent()
 		for i := range pop.GetSpecies() {
 			pop.GetSpecies()[i].SetChampion()
-			/*if pop.GetGeneration() % 5 == 0 {
-				pop.GetSpecies()[i].CullTheWeak()
-			}*/
+			pop.GetSpecies()[i].CullTheWeak()
 		}
 		pop.SetGrandChampion()
 		log.Println(pop.GetGrandChampion().GetFitness(), pop.GetGeneration())

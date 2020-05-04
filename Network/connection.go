@@ -1,10 +1,14 @@
 package Network
 
 type Connection struct {
-	weight				float64
-	nodeA				*Node
-	nodeB				*Node
-	innovationNumber	int
+	weight           float64
+	nodeA            *Node
+	nodeB            *Node
+	innovationNumber int
+}
+
+func CreateConnection(weight float64, nodeA *Node, nodeB *Node, innovation int) *Connection {
+	return &Connection{weight, nodeA, nodeB, innovation}
 }
 
 func (c *Connection) GetWeight() float64 {
