@@ -91,15 +91,11 @@ func TestSpecies_SetChampion(t *testing.T) {
 		t.Fatalf("Set champion did not set champion")
 	}
 	if testSpecies.GetChampion() != testGenomes[0] {
-		t.Fatalf("Expected set champion to select genome with fitness %v, instead selected genome with " +
+		t.Fatalf("Expected set champion to select genome with fitness %v, instead selected genome with "+
 			"fitness %v", testGenomes[0].GetFitness(), testSpecies.GetChampion().GetFitness())
 	}
 	if testSpecies.GetFitnessCap() != 6 {
 		t.Fatalf("Expected fitness cap to be unaffected, but it was changed to %v", testSpecies.GetFitnessCap())
-	}
-	if testSpecies.GetStagnation() != 4 {
-		t.Fatalf("Expected stagnation to be incremented to 4, but it was changed to %v",
-			testSpecies.GetStagnation())
 	}
 
 	testSpecies.AddToGenomes(&Genome{fitness: 7})
@@ -165,10 +161,6 @@ func TestSpecies_Mutate(t *testing.T) {
 	testSpecies.SetChampion()
 	champion := testSpecies.GetChampion()
 	testSpecies.Mutate()
-	if testSpecies.GetInnovationCounter() <= 8 {
-		t.Fatalf("Expected mutate to increase species innovation, but it is %v",
-			testSpecies.GetInnovationCounter())
-	}
 
 	champion.FeedForward()
 	testGenomeTwo.FeedForward()
@@ -187,8 +179,8 @@ func TestSpecies_OrderByFitness(t *testing.T) {
 	testSpecies := Species{genomes: []*Genome{testGenomeOne, testGenomeTwo, testGenomeThree}}
 	testSpecies.OrderByFitness()
 	for i := 1; i < len(testSpecies.GetGenomes()); i++ {
-		if testSpecies.GetGenomes()[i].GetFitness() < testSpecies.GetGenomes()[i - 1].GetFitness() {
-			t.Fatalf("Genome at index %v had a lower fitness than genom at index %v", i, i + 1)
+		if testSpecies.GetGenomes()[i].GetFitness() < testSpecies.GetGenomes()[i-1].GetFitness() {
+			t.Fatalf("Genome at index %v had a lower fitness than genom at index %v", i, i+1)
 		}
 	}
 }
@@ -204,7 +196,7 @@ func TestSpecies_CullTheWeak(t *testing.T) {
 	}
 	for i := range testSpecies.GetGenomes() {
 		if testSpecies.GetGenomes()[i] == testGenomeOne {
-			t.Fatalf("Expected testGenomeOne to have been culled for being weak, but it was not. Found at " +
+			t.Fatalf("Expected testGenomeOne to have been culled for being weak, but it was not. Found at "+
 				"index %v", i)
 		}
 	}

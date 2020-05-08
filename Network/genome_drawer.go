@@ -40,9 +40,9 @@ func run() {
 			basicTxt.Color = colornames.Black
 			//fmt.Fprintf(basicTxt, strconv.Itoa(g.GetNodesWithLayer(i + 1)[j].GetInnovationNumber()) + ", " +
 			//strconv.Itoa(g.GetNodesWithLayer(i + 1)[j].GetLayer()))
-			//fmt.Fprintf(basicTxt, strconv.Itoa(g.GetNodesWithLayer(i + 1)[j].GetInnovationNumber())+", "+
-			//strconv.FormatFloat(g.GetNodesWithLayer(i + 1)[j].GetWeight(), 'f', 2, 64))
-			fmt.Fprintf(basicTxt, strconv.FormatFloat(g.GetNodesWithLayer(i + 1)[j].GetWeight(), 'f', 2, 64))
+			fmt.Fprintf(basicTxt, strconv.Itoa(g.GetNodesWithLayer(i + 1)[j].GetInnovationNumber())+", "+
+				strconv.FormatFloat(g.GetNodesWithLayer(i + 1)[j].GetWeight(), 'f', 2, 64))
+			//fmt.Fprintf(basicTxt, strconv.FormatFloat(g.GetNodesWithLayer(i + 1)[j].GetWeight(), 'f', 2, 64))
 			basicTxt.Draw(win, pixel.IM.Moved(pixel.V(
 				(float64(i)+0.5)*(win.Bounds().W()/float64(g.GetLayers()))-1,
 				(float64(j)+0.5)*(win.Bounds().H()/float64(len(g.GetNodesWithLayer(i+1))))+50)))

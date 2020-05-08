@@ -13,7 +13,7 @@ type Population struct {
 
 func InitPopulation(i int, o int) *Population {
 	newSpecies := []*Species{}
-	for j := 0; j < 5; j++ {
+	for j := 0; j < 3; j++ {
 		newSpecies = append(newSpecies, InitSpecies(i, o, 0))
 	}
 	newPopulation := &Population{totalInputs: i, totalOutputs: o, generation: 0, species: newSpecies}

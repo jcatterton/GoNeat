@@ -17,7 +17,7 @@ type Species struct {
 
 func InitSpecies(i int, o int, g int) *Species {
 	newGenomes := []*Genome{}
-	for j := 0; j < 10; j++ {
+	for j := 0; j < 5; j++ {
 		newGenomes = append(newGenomes, InitGenome(i, o))
 	}
 	newSpecies := &Species{genomes: newGenomes, generation: g, stagnation: 0}
@@ -59,7 +59,9 @@ func (s *Species) GetChampion() *Genome {
 func (s *Species) SetChampion() {
 	if s.GetChampion() == nil {
 		s.champion = s.GetGenomes()[0]
-		s.fitnessCap = s.champion.GetFitness()
+		if s.fitnessCap < s.champion.GetFitness() {
+			s.fitnessCap = s.champion.GetFitness()
+		}
 	}
 	s.champion.SetMutability(false)
 

@@ -305,16 +305,6 @@ func TestGenome_FeedForward(t *testing.T) {
 				"%v has weight %v", i, finalLayerNodes[i].GetWeight())
 		}
 	}
-	for i := range testGenome.GetNodes() {
-		if testGenome.GetNodes()[i].GetWeight() < 0 && testGenome.GetNodes()[i].IsActivated() {
-			t.Fatalf("Expected nodes with weight less than 0 to be deactivated, but node at index %v has weight"+
-				"%v and is still activated.", i, testGenome.GetNodes()[i].GetWeight())
-		}
-		if testGenome.GetNodes()[i].GetWeight() > 0 && !testGenome.GetNodes()[i].IsActivated() {
-			t.Fatalf("Expected nodes with weight greater than 0 to be activated, but node at index %v has weight"+
-				"%v and is deactivated.", i, testGenome.GetNodes()[i].GetWeight())
-		}
-	}
 }
 
 func TestGenome_GetInnovation(t *testing.T) {

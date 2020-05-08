@@ -229,9 +229,7 @@ func (g *Genome) FeedForward() {
 	linearCombination := 0.0
 
 	for i := range g.GetNodes() {
-		if g.GetNodes()[i].GetLayer() == 1 {
-			g.GetNodes()[i].Sigmoid()
-		} else if g.GetNodes()[i].GetLayer() > 1 {
+		if g.GetNodes()[i].GetLayer() != 1 {
 			for j := range g.GetNodes()[i].GetInwardConnections() {
 				linearCombination = linearCombination + (g.GetNodes()[i].GetInwardConnections()[j].GetWeight() *
 					g.GetNodes()[i].GetInwardConnections()[j].GetNodeA().GetWeight())
@@ -239,8 +237,8 @@ func (g *Genome) FeedForward() {
 			g.GetNodes()[i].SetWeight(linearCombination)
 			g.GetNodes()[i].Sigmoid()
 		}
-		linearCombination = 0
 	}
+	linearCombination = 0
 }
 
 func (g *Genome) GetInnovation() int {
@@ -346,6 +344,7 @@ func (g *Genome) TakeInput(input []float64) error {
 	}
 	for i := range inputNodes {
 		g.GetNodes()[NodeInnovationIndex(g.GetNodes(), inputNodes[i])].SetWeight(input[i])
+		g.GetNodes()[NodeInnovationIndex(g.GetNodes(), inputNodes[i])].Activate()
 	}
 	return nil
 }
