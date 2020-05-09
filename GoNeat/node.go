@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"math"
@@ -95,7 +95,7 @@ func (n *Node) SetInnovationNumber(i int) {
 
 func (n *Node) Sigmoid() {
 	n.weight = 1 / (1 + math.Exp(n.GetWeight()*-4.9))
-	if n.weight < 0.5 {
+	if n.weight <= 0.5 {
 		n.Deactivate()
 	} else {
 		n.Activate()

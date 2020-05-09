@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"fmt"
@@ -12,24 +12,15 @@ import (
 )
 
 var g *Genome
+var win *pixelgl.Window
 
-func DrawGenome(gen *Genome) {
+func DrawGenome(gen *Genome, window *pixelgl.Window) {
 	g = gen
+	win = window
 	pixelgl.Run(run)
 }
 
 func run() {
-	cfg := pixelgl.WindowConfig{
-		Title:  "Genome",
-		Bounds: pixel.R(0, 0, 1024, 768),
-		VSync:  true,
-	}
-	win, err := pixelgl.NewWindow(cfg)
-	if err != nil {
-		panic(err)
-	}
-	win.Clear(colornames.White)
-
 	basicAtlas := text.NewAtlas(basicfont.Face7x13, text.ASCII)
 	basicTxt := text.New(pixel.V(0, 0), basicAtlas)
 
@@ -71,8 +62,4 @@ func run() {
 		}
 	}
 	imd.Draw(win)
-
-	for !win.Closed() {
-		win.Update()
-	}
 }

@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 type Connection struct {
 	weight           float64

@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"testing"

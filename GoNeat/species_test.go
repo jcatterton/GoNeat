@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import "testing"
 
@@ -61,30 +61,13 @@ func TestSpecies_GetChampion(t *testing.T) {
 	}
 }
 
-func TestSpecies_GetFitnessCap(t *testing.T) {
-	testSpecies := &Species{fitnessCap: 5}
-	if testSpecies.GetFitnessCap() != testSpecies.fitnessCap {
-		t.Fatalf("Expected get fitness cap (%v) to match actual fitness cap (%v), but it does not.",
-			testSpecies.GetFitnessCap(), testSpecies.fitnessCap)
-	}
-}
-
-func TestSpecies_SetFitnessCap(t *testing.T) {
-	testSpecies := &Species{}
-	testSpecies.SetFitnessCap(5.0)
-	if testSpecies.GetFitnessCap() != 5.0 {
-		t.Fatalf("Expected get fitness cap (%v) to match set fitness cap (5.0), but it did not.",
-			testSpecies.GetFitnessCap())
-	}
-}
-
 func TestSpecies_SetChampion(t *testing.T) {
 	testGenomes := []*Genome{
 		{fitness: 5},
 		{fitness: 3},
 		{fitness: 1},
 	}
-	testSpecies := &Species{genomes: testGenomes, stagnation: 3, fitnessCap: 6}
+	testSpecies := &Species{genomes: testGenomes, stagnation: 3}
 	testSpecies.SetChampion()
 
 	if testSpecies.GetChampion() == nil {
@@ -94,17 +77,10 @@ func TestSpecies_SetChampion(t *testing.T) {
 		t.Fatalf("Expected set champion to select genome with fitness %v, instead selected genome with "+
 			"fitness %v", testGenomes[0].GetFitness(), testSpecies.GetChampion().GetFitness())
 	}
-	if testSpecies.GetFitnessCap() != 6 {
-		t.Fatalf("Expected fitness cap to be unaffected, but it was changed to %v", testSpecies.GetFitnessCap())
-	}
 
 	testSpecies.AddToGenomes(&Genome{fitness: 7})
 	testSpecies.SetChampion()
 
-	if testSpecies.GetFitnessCap() != 7 {
-		t.Fatalf("Expected fitness cap to be raised to fitness of new champion, but its value is %v",
-			testSpecies.GetChampion().GetFitness())
-	}
 	if testSpecies.GetStagnation() != 0 {
 		t.Fatalf("Expected stagnation to reset to 0, but its value is %v", testSpecies.GetStagnation())
 	}
@@ -204,8 +180,8 @@ func TestSpecies_CullTheWeak(t *testing.T) {
 
 func TestInitSpecies(t *testing.T) {
 	testSpecies := InitSpecies(3, 5, 0)
-	if len(testSpecies.GetGenomes()) != 10 {
-		t.Fatalf("Expected species to initalize with 10 genomes, but got %v", len(testSpecies.GetGenomes()))
+	if len(testSpecies.GetGenomes()) != 5 {
+		t.Fatalf("Expected species to initalize with 5 genomes, but got %v", len(testSpecies.GetGenomes()))
 	}
 
 	for i := range testSpecies.GetGenomes() {

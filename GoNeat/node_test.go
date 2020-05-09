@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"math"
@@ -185,7 +185,7 @@ func TestNode_GetWeight(t *testing.T) {
 func TestNode_SetWeight(t *testing.T) {
 	testNodeA := Node{}
 	testNodeA.SetWeight(0.51)
-	if testNodeA.GetWeight() != 0.51{
+	if testNodeA.GetWeight() != 0.51 {
 		t.Fatalf("Expected test node to have weight 0.51, but got %v", testNodeA.GetWeight())
 	}
 }
@@ -199,11 +199,11 @@ func TestNode_Sigmoid(t *testing.T) {
 
 	if testNodeA.IsActivated() {
 		t.Fatalf("Expected test node to be deactivated, but it is activated. Weight is %v, sigmoid value is %v",
-			testNodeA.GetWeight(), 1/(1 + math.Exp(testNodeA.GetWeight() * -4.9)))
+			testNodeA.GetWeight(), 1/(1+math.Exp(testNodeA.GetWeight()*-4.9)))
 	}
 	if !testNodeB.IsActivated() {
 		t.Fatalf("Expected test node to be activated, but it is deactivated. Weight is %v, sigmoid value is %v",
-			testNodeB.GetWeight(), 1/(1 + math.Exp(testNodeB.GetWeight() * -4.9)))
+			testNodeB.GetWeight(), 1/(1+math.Exp(testNodeB.GetWeight()*-4.9)))
 	}
 }
 
@@ -228,20 +228,20 @@ func TestNode_Clone(t *testing.T) {
 	copyNode := testNode.Clone()
 
 	if copyNode.IsActivated() != testNode.IsActivated() {
-		t.Fatalf("Expected copied node to have the same activation status as test node, but copied node has " +
+		t.Fatalf("Expected copied node to have the same activation status as test node, but copied node has "+
 			"activation status %v, and test node has activation status %v.",
 			copyNode.IsActivated(), testNode.IsActivated())
 	}
 	if copyNode.GetLayer() != testNode.GetLayer() {
-		t.Fatalf("Expected copied node to have the same layer as test node, but copied node has layer %v and " +
+		t.Fatalf("Expected copied node to have the same layer as test node, but copied node has layer %v and "+
 			"test node has layer %v.", copyNode.GetLayer(), testNode.GetLayer())
 	}
 	if copyNode.GetWeight() != testNode.GetWeight() {
-		t.Fatalf("Expected copied node to have the same weight as test node, but copied node has weight %v " +
+		t.Fatalf("Expected copied node to have the same weight as test node, but copied node has weight %v "+
 			"and test node has weight %v.", copyNode.GetWeight(), testNode.GetWeight())
 	}
 	if copyNode.GetInnovationNumber() != testNode.GetInnovationNumber() {
-		t.Fatalf("Expected copied node to have the same innovation number as test node, but copied node has " +
+		t.Fatalf("Expected copied node to have the same innovation number as test node, but copied node has "+
 			"innovation number %v and test node has innovation number %v", copyNode.GetInnovationNumber(),
 			testNode.GetInnovationNumber())
 	}

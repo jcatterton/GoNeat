@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	//"math/rand"
@@ -11,7 +11,6 @@ type Species struct {
 	generation        int
 	stagnation        int
 	champion          *Genome
-	fitnessCap        float64
 	innovationCounter int
 }
 
@@ -59,33 +58,21 @@ func (s *Species) GetChampion() *Genome {
 func (s *Species) SetChampion() {
 	if s.GetChampion() == nil {
 		s.champion = s.GetGenomes()[0]
-		if s.fitnessCap < s.champion.GetFitness() {
-			s.fitnessCap = s.champion.GetFitness()
-		}
 	}
 	s.champion.SetMutability(false)
 
-	originalFitnessCap := s.fitnessCap
+	originalFitnessCap := s.champion.GetFitness()
 	for i := range s.GetGenomes() {
-		if s.GetGenomes()[i].GetFitness() > s.fitnessCap {
+		if s.GetGenomes()[i].GetFitness() > s.champion.GetFitness() {
 			s.champion.SetMutability(true)
-			s.fitnessCap = s.GetGenomes()[i].GetFitness()
 			s.champion = s.GetGenomes()[i]
 			s.champion.SetMutability(false)
 		}
 	}
 
-	if s.fitnessCap > originalFitnessCap {
+	if s.champion.GetFitness() > originalFitnessCap {
 		s.ResetStagnation()
 	}
-}
-
-func (s *Species) GetFitnessCap() float64 {
-	return s.fitnessCap
-}
-
-func (s *Species) SetFitnessCap(f float64) {
-	s.fitnessCap = f
 }
 
 func (s *Species) GetInnovationCounter() int {

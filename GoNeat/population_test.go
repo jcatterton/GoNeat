@@ -1,11 +1,11 @@
-package Network
+package GoNeat
 
 import "testing"
 
 func TestInitPopulation(t *testing.T) {
 	testPop := InitPopulation(5, 3)
-	if len(testPop.GetSpecies()) != 5 {
-		t.Fatalf("Expected population to initialize with 5 species, got %v", len(testPop.GetSpecies()))
+	if len(testPop.GetSpecies()) != 3 {
+		t.Fatalf("Expected population to initialize with 3 species, got %v", len(testPop.GetSpecies()))
 	}
 }
 
@@ -79,21 +79,6 @@ func TestPopulation_SetGrandChampion(t *testing.T) {
 	}
 }
 
-func TestPopulation_GetFitnessCap(t *testing.T) {
-	testPop := Population{fitnessCap: 5}
-	if testPop.GetFitnessCap() != testPop.fitnessCap {
-		t.Fatalf("Expected fitness cap of %v, got %v", testPop.fitnessCap, testPop.GetFitnessCap())
-	}
-}
-
-func TestPopulation_SetFitnessCap(t *testing.T) {
-	testPop := Population{}
-	testPop.SetFitnessCap(5)
-	if testPop.GetFitnessCap() != 5 {
-		t.Fatalf("Expected fitness cap of 5, got %v", testPop.GetFitnessCap())
-	}
-}
-
 func TestPopulation_GetAllGenomes(t *testing.T) {
 	testGenomeOne := &Genome{}
 	testGenomeTwo := &Genome{}
@@ -102,5 +87,25 @@ func TestPopulation_GetAllGenomes(t *testing.T) {
 	testPop := Population{species: []*Species{testSpeciesOne, testSpeciesTwo}}
 	if len(testPop.GetAllGenomes()) != 2 {
 		t.Fatalf("Expected 2 genomes, got %v", len(testPop.GetAllGenomes()))
+	}
+}
+
+func TestPopulation_GetChampionSpecies(t *testing.T) {
+	testSpeciesOne := &Species{}
+	testSpeciesTwo := &Species{}
+	testGenomeOne := &Genome{}
+	testGenomeTwo := &Genome{}
+	testGenomeOne.SetFitness(5.0)
+	testGenomeTwo.SetFitness(1.0)
+	testSpeciesOne.AddToGenomes(testGenomeOne)
+	testSpeciesTwo.AddToGenomes(testGenomeTwo)
+
+	testPopulation := &Population{}
+	testPopulation.AddToSpecies(testSpeciesOne)
+	testPopulation.AddToSpecies(testSpeciesTwo)
+
+	testPopulation.SetGrandChampion()
+	if testPopulation.GetChampionSpecies() != testSpeciesOne {
+		t.Fatalf("Expected test species one to be the champion species, but it was not.")
 	}
 }

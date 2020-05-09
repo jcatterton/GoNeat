@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"testing"
@@ -73,11 +73,11 @@ func TestConnection_Clone(t *testing.T) {
 	copyConnection := testConnection.Clone()
 
 	if testConnection.GetWeight() != copyConnection.GetWeight() {
-		t.Fatalf("Expected test connection and copy connection to have the same weight, but test connection " +
+		t.Fatalf("Expected test connection and copy connection to have the same weight, but test connection "+
 			"has weight %v and copied connection has weight %v", testConnection.GetWeight(), copyConnection.GetWeight())
 	}
 	if testConnection.GetInnovationNumber() != copyConnection.GetInnovationNumber() {
-		t.Fatalf("Expected test connection and copy connection to have the same innovation, but test " +
+		t.Fatalf("Expected test connection and copy connection to have the same innovation, but test "+
 			"connection has innovation %v and copied connection has innovation %v",
 			testConnection.GetInnovationNumber(), copyConnection.GetInnovationNumber())
 	}

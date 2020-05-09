@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import "sort"
 
@@ -8,7 +8,6 @@ type Population struct {
 	grandChampion *Genome
 	totalInputs   int
 	totalOutputs  int
-	fitnessCap    float64
 }
 
 func InitPopulation(i int, o int) *Population {
@@ -43,7 +42,6 @@ func (p *Population) GetGrandChampion() *Genome {
 func (p *Population) SetGrandChampion() {
 	if p.grandChampion == nil {
 		p.grandChampion = p.GetAllGenomes()[0]
-		p.fitnessCap = p.grandChampion.GetFitness()
 	}
 	p.grandChampion.SetMutability(false)
 
@@ -51,10 +49,9 @@ func (p *Population) SetGrandChampion() {
 		p.GetSpecies()[i].SetChampion()
 	}
 	for i := range p.GetSpecies() {
-		if p.GetSpecies()[i].GetChampion().GetFitness() > p.fitnessCap {
+		if p.GetSpecies()[i].GetChampion().GetFitness() > p.grandChampion.GetFitness() {
 			p.grandChampion.SetMutability(true)
 			p.grandChampion = p.GetSpecies()[i].GetChampion()
-			p.fitnessCap = p.grandChampion.GetFitness()
 			p.grandChampion.SetMutability(false)
 		}
 	}
@@ -68,24 +65,14 @@ func (p *Population) GetTotalOutputs() int {
 	return p.totalOutputs
 }
 
-func (p *Population) GetFitnessCap() float64 {
-	return p.fitnessCap
-}
-
-func (p *Population) SetFitnessCap(f float64) {
-	p.fitnessCap = f
-}
-
 func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
-		if p.GetSpecies()[i].GetStagnation() > 20 {
+		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i] != p.GetChampionSpecies() {
 			newSpecies := &Species{stagnation: 0}
 			for i := range p.GetSpecies() {
 				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
 				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
 			}
-
-			newSpecies.SetFitnessCap(0)
 
 			sort.Slice(newSpecies.GetGenomes(), func(i, j int) bool {
 				return newSpecies.GetGenomes()[i].GetInnovation() > newSpecies.GetGenomes()[j].GetInnovation()
@@ -96,6 +83,17 @@ func (p *Population) ExtinctionEvent() {
 			p.GetSpecies()[i] = newSpecies
 		}
 	}
+}
+
+func (p *Population) GetChampionSpecies() *Species {
+	for i := range p.GetSpecies() {
+		for j := range p.GetSpecies()[i].GetGenomes() {
+			if p.GetSpecies()[i].GetGenomes()[j] == p.GetGrandChampion() {
+				return p.GetSpecies()[i]
+			}
+		}
+	}
+	return p.GetSpecies()[0]
 }
 
 func (p *Population) Mutate() {

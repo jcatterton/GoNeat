@@ -1,4 +1,4 @@
-package Network
+package GoNeat
 
 import (
 	"errors"
@@ -30,10 +30,10 @@ func InitGenome(input int, output int) *Genome {
 		innovationCounter = innovationCounter + 1
 	}
 	for i := 0; i < output; i++ {
-		initNodes = append(initNodes, &Node{layer: 3, innovationNumber: innovationCounter})
+		initNodes = append(initNodes, &Node{layer: 2, innovationNumber: innovationCounter})
 		innovationCounter = innovationCounter + 1
 	}
-	for i := 0; i < (input+output)/2; i++ {
+	/*for i := 0; i < (input+output)/2; i++ {
 		initNodes = append(initNodes, &Node{layer: 2, innovationNumber: innovationCounter})
 		innovationCounter = innovationCounter + 1
 	}
@@ -53,8 +53,8 @@ func InitGenome(input int, output int) *Genome {
 				initConnections = append(initConnections, &newConnection)
 			}
 		}
-	}
-	return &Genome{nodes: initNodes, connections: initConnections, layers: 3, innovationCounter: innovationCounter,
+	}*/
+	return &Genome{nodes: initNodes, connections: nil, layers: 2, innovationCounter: innovationCounter,
 		fitness: 0, mutable: true}
 }
 
@@ -150,7 +150,6 @@ func (g *Genome) AddRandomNode() {
 		}
 		g.IncrementLayers()
 	} else if randomConnection.GetNodeB().GetLayer()-randomConnection.GetNodeA().GetLayer() < 1 {
-		DrawGenome(g)
 		log.Fatalf("Connection has NodeA with layer %v which is not less than NodeB with layer %v",
 			randomConnection.GetNodeA().GetLayer(), randomConnection.GetNodeB().GetLayer())
 	}
