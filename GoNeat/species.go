@@ -16,7 +16,7 @@ type Species struct {
 
 func InitSpecies(i int, o int, g int) *Species {
 	newGenomes := []*Genome{}
-	for j := 0; j < 5; j++ {
+	for j := 0; j < g; j++ {
 		newGenomes = append(newGenomes, InitGenome(i, o))
 	}
 	newSpecies := &Species{genomes: newGenomes, generation: g, stagnation: 0}

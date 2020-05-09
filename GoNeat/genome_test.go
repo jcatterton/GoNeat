@@ -15,42 +15,24 @@ func TestInitGenome(t *testing.T) {
 			layerOneNodes = layerOneNodes + 1
 		} else if testGenome.GetNodes()[i].GetLayer() == 2 {
 			layerTwoNodes = layerTwoNodes + 1
-		} else if testGenome.GetNodes()[i].GetLayer() == 3 {
-			layerThreeNodes = layerThreeNodes + 1
 		}
 	}
 
-	if testGenome.GetLayers() != 3 {
+	if testGenome.GetLayers() != 2 {
 		t.Fatalf("Expected 3 layers, got %v", testGenome.GetLayers())
 	}
 	if layerOneNodes != 5 {
 		t.Fatalf("Expected layer one to have five nodes, got %v", layerOneNodes)
 	}
-	if layerTwoNodes != (layerOneNodes+layerThreeNodes)/2 {
+	if layerTwoNodes != 3 {
 		t.Fatalf("Expected layer two to have %v nodes, got %v", (layerOneNodes+layerThreeNodes)/2,
 			layerTwoNodes)
-	}
-	if layerThreeNodes != 3 {
-		t.Fatalf("Expected layer three to have three nodes, got %v", layerThreeNodes)
-	}
-	if len(testGenome.GetConnections()) != ((layerOneNodes * layerTwoNodes) + (layerTwoNodes * layerThreeNodes)) {
-		t.Fatalf("Expected %v connections, got %v",
-			(layerOneNodes*layerTwoNodes)+(layerTwoNodes*layerThreeNodes),
-			len(testGenome.GetConnections()))
 	}
 	for i := 0; i < len(testGenome.GetNodes())-1; i++ {
 		if testGenome.GetNodes()[i].GetInnovationNumber() == testGenome.GetNodes()[i+1].GetInnovationNumber() {
 			t.Fatalf("Expected nodes to be initialized with different innovation numbers, but node at index "+
 				"%v and %v have the same innovation number of %v", i, i+1,
 				testGenome.GetNodes()[i].GetInnovationNumber())
-		}
-	}
-	for i := 0; i < len(testGenome.GetConnections())-1; i++ {
-		if testGenome.GetConnections()[i].GetInnovationNumber() ==
-			testGenome.GetConnections()[i+1].GetInnovationNumber() {
-			t.Fatalf("Expected connections to be initialized with different innovation numbers, but "+
-				"connections at index %v and %v have the same innovation number of %v", i, i+1,
-				testGenome.GetConnections()[i].GetInnovationNumber())
 		}
 	}
 }
@@ -178,6 +160,11 @@ func TestGenome_SetLayers(t *testing.T) {
 func TestGenome_AddRandomNode(t *testing.T) {
 	testGenome := InitGenome(5, 3)
 
+	testConnection := &Connection{nodeA: testGenome.GetNodesWithLayer(1)[0], nodeB: testGenome.GetNodesWithLayer(2)[0]}
+	testGenome.GetNodesWithLayer(1)[0].AddToOutwardConnections(testConnection)
+	testGenome.GetNodesWithLayer(2)[0].AddToInwardConnections(testConnection)
+	testGenome.AddConnection(testConnection)
+
 	previousLength := len(testGenome.GetNodes())
 	testGenome.AddRandomNode()
 	newestNode := testGenome.GetNodes()[len(testGenome.GetNodes())-1]
@@ -259,16 +246,12 @@ func TestGenome_GetNodesWithLayer(t *testing.T) {
 
 	layerOneNodes := testGenome.GetNodesWithLayer(1)
 	layerTwoNodes := testGenome.GetNodesWithLayer(2)
-	layerThreeNodes := testGenome.GetNodesWithLayer(3)
 
 	if len(layerOneNodes) != 5 {
 		t.Fatalf("Expected %v layer one nodes, but got %v", 5, len(layerOneNodes))
 	}
-	if len(layerTwoNodes) != 4 {
+	if len(layerTwoNodes) != 3 {
 		t.Fatalf("Expected %v layer two nodes, but got %v", 4, len(layerTwoNodes))
-	}
-	if len(layerThreeNodes) != 3 {
-		t.Fatalf("Expected %v layer three nodes, but got %v", 3, len(layerThreeNodes))
 	}
 	for i := range layerOneNodes {
 		if layerOneNodes[i].GetLayer() != 1 {
@@ -278,11 +261,6 @@ func TestGenome_GetNodesWithLayer(t *testing.T) {
 	for i := range layerTwoNodes {
 		if layerTwoNodes[i].GetLayer() != 2 {
 			t.Fatalf("Node at index %v in layerTwoNodes has layer %v", i, layerTwoNodes)
-		}
-	}
-	for i := range layerThreeNodes {
-		if layerThreeNodes[i].GetLayer() != 3 {
-			t.Fatalf("Node at index %v in layerThreeNodes has layer %v", i, layerThreeNodes)
 		}
 	}
 	if testGenome.GetNodesWithLayer(testGenome.GetLayers()+1) != nil {
@@ -455,7 +433,8 @@ func TestGenome_Mutate(t *testing.T) {
 	testGenome := InitGenome(5, 3)
 	testGenomeClone := testGenome.Clone()
 	testGenome.SetMutability(true)
-	testGenome.Mutate()
+	for testGenome.Mutate() == 0 {
+	}
 	testGenome.FeedForward()
 	testGenomeClone.FeedForward()
 	testGenomeOutputs := testGenome.GetOutputs()

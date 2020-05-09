@@ -10,10 +10,10 @@ type Population struct {
 	totalOutputs  int
 }
 
-func InitPopulation(i int, o int) *Population {
+func InitPopulation(i int, o int, s int, g int) *Population {
 	newSpecies := []*Species{}
-	for j := 0; j < 3; j++ {
-		newSpecies = append(newSpecies, InitSpecies(i, o, 0))
+	for j := 0; j < s; j++ {
+		newSpecies = append(newSpecies, InitSpecies(i, o, g))
 	}
 	newPopulation := &Population{totalInputs: i, totalOutputs: o, generation: 0, species: newSpecies}
 	return newPopulation

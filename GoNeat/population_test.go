@@ -3,7 +3,7 @@ package GoNeat
 import "testing"
 
 func TestInitPopulation(t *testing.T) {
-	testPop := InitPopulation(5, 3)
+	testPop := InitPopulation(5, 3, 3, 5)
 	if len(testPop.GetSpecies()) != 3 {
 		t.Fatalf("Expected population to initialize with 3 species, got %v", len(testPop.GetSpecies()))
 	}

@@ -179,7 +179,7 @@ func TestSpecies_CullTheWeak(t *testing.T) {
 }
 
 func TestInitSpecies(t *testing.T) {
-	testSpecies := InitSpecies(3, 5, 0)
+	testSpecies := InitSpecies(3, 5, 5)
 	if len(testSpecies.GetGenomes()) != 5 {
 		t.Fatalf("Expected species to initalize with 5 genomes, but got %v", len(testSpecies.GetGenomes()))
 	}
