@@ -33,27 +33,6 @@ func InitGenome(input int, output int) *Genome {
 		initNodes = append(initNodes, &Node{layer: 2, innovationNumber: innovationCounter})
 		innovationCounter = innovationCounter + 1
 	}
-	/*for i := 0; i < (input+output)/2; i++ {
-		initNodes = append(initNodes, &Node{layer: 2, innovationNumber: innovationCounter})
-		innovationCounter = innovationCounter + 1
-	}
-	initConnections := []*Connection{}
-	for i := range initNodes {
-		for j := range initNodes {
-			if initNodes[j].GetLayer()-initNodes[i].GetLayer() == 1 {
-				newConnection := Connection{innovationNumber: 0}
-				newConnection.SetNodeA(initNodes[i])
-				newConnection.SetNodeB(initNodes[j])
-				rand.Seed(time.Now().UTC().UnixNano())
-				newConnection.SetWeight((rand.Float64() * 2) - 1)
-				newConnection.SetInnovationNumber(innovationCounter)
-				innovationCounter = innovationCounter + 1
-				initNodes[i].AddToOutwardConnections(&newConnection)
-				initNodes[j].AddToInwardConnections(&newConnection)
-				initConnections = append(initConnections, &newConnection)
-			}
-		}
-	}*/
 	return &Genome{nodes: initNodes, connections: nil, layers: 2, innovationCounter: innovationCounter,
 		fitness: 0, mutable: true}
 }
