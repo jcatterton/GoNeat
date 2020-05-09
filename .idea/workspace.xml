@@ -2,26 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="054c1b37-cd0b-40df-9a3c-495e18405eb6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/bird.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/bird.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/game.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/game/pipe.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main.go" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/pipe.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/connection.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/connection.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/connection_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/connection_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/genome.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/genome.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/genome_drawer.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/genome_drawer.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/genome_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/genome_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/node.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/node.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/node_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/node_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/population.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/population.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/population_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/population_test.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/species.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/species.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Network/species_test.go" beforeDir="false" afterPath="$PROJECT_DIR$/GoNeat/species_test.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -56,7 +38,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game/game.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="45">
@@ -69,14 +51,18 @@
         <entry file="file://$PROJECT_DIR$/GoNeat/connection.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
-              <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+              <caret line="1" selection-start-line="1" selection-end-line="1" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/go.mod">
-          <provider selected="true" editor-type-id="text-editor" />
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="35" selection-start-column="35" selection-end-column="35" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
@@ -210,6 +196,7 @@
         <option value="$PROJECT_DIR$/Network/node.go" />
         <option value="$PROJECT_DIR$/Network/connection.go" />
         <option value="$PROJECT_DIR$/game/game.go" />
+        <option value="$PROJECT_DIR$/go.mod" />
       </list>
     </option>
   </component>
@@ -396,7 +383,7 @@
       <workItem from="1588965211195" duration="1047000" />
       <workItem from="1588973277957" duration="92000" />
       <workItem from="1588973406227" duration="3105000" />
-      <workItem from="1589036681882" duration="10537000" />
+      <workItem from="1589036681882" duration="10854000" />
     </task>
     <task id="LOCAL-00001" summary="Fixed issue where genomes inputs would be in the wrong order, leading to variable outputs">
       <created>1588365782650</created>
@@ -426,7 +413,14 @@
       <option name="project" value="LOCAL" />
       <updated>1588965259449</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="General updates">
+      <created>1589048767667</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1589048767667</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -462,7 +456,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="171943000" />
+    <option name="totallyTimeSpent" value="172260000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="0" width="1680" height="1050" extended-state="6" />
@@ -652,9 +646,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/go.mod">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$USER_HOME$/go/pkg/mod/github.com/faiface/pixel@v0.9.0/pixelgl/run.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="405">
@@ -705,7 +696,7 @@
     <entry file="file://$PROJECT_DIR$/GoNeat/connection.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15">
-          <caret line="1" lean-forward="true" selection-start-line="1" selection-end-line="1" />
+          <caret line="1" selection-start-line="1" selection-end-line="1" />
         </state>
       </provider>
     </entry>
@@ -713,6 +704,13 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="45">
           <caret line="3" column="12" selection-start-line="3" selection-start-column="12" selection-end-line="3" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/go.mod">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="35" selection-start-column="35" selection-end-column="35" />
         </state>
       </provider>
     </entry>
