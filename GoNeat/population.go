@@ -66,8 +66,13 @@ func (p *Population) GetTotalOutputs() int {
 func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
 		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i] != p.GetChampionSpecies() {
-			newSpecies := InitSpecies(p.totalInputs, p.totalOutputs, len(p.GetChampionSpecies().GetGenomes()))
-			newSpecies.SetInnovationCounter(newSpecies.GetGenomes()[0].GetInnovation())
+			newSpecies := &Species{}
+			for i := range p.GetChampionSpecies().GetGenomes() {
+				newSpecies.AddToGenomes(p.GetChampionSpecies().GetGenomes()[i].Clone())
+				newSpecies.SetInnovationCounter(p.GetChampionSpecies().GetInnovationCounter())
+				newSpecies.Mutate()
+				newSpecies.ResetStagnation()
+			}
 			p.species[i] = newSpecies
 		}
 	}
