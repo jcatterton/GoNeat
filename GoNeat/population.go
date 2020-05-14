@@ -1,7 +1,5 @@
 package GoNeat
 
-import "sort"
-
 type Population struct {
 	species       []*Species
 	generation    int
@@ -68,15 +66,7 @@ func (p *Population) GetTotalOutputs() int {
 func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
 		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i] != p.GetChampionSpecies() {
-			newSpecies := &Species{stagnation: 0}
-			for j := 0; j < len(p.GetChampionSpecies().GetGenomes()); j++ {
-				newSpecies.AddToGenomes(p.GetChampionSpecies().BreedRandomGenomes())
-			}
-
-			sort.Slice(newSpecies.GetGenomes(), func(a, b int) bool {
-				return newSpecies.GetGenomes()[a].GetInnovation() > newSpecies.GetGenomes()[b].GetInnovation()
-			})
-
+			newSpecies := InitSpecies(p.totalInputs, p.totalOutputs, len(p.GetChampionSpecies().GetGenomes()))
 			newSpecies.SetInnovationCounter(newSpecies.GetGenomes()[0].GetInnovation())
 			p.species[i] = newSpecies
 		}
