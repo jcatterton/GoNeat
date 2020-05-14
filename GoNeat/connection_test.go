@@ -4,6 +4,26 @@ import (
 	"testing"
 )
 
+func TestCreateConnection(t *testing.T) {
+	testNodeA := &Node{}
+	testNodeB := &Node{}
+
+	expectedConnection := &Connection{weight: 5, nodeA: testNodeA, nodeB: testNodeB, innovationNumber: 0}
+
+	if CreateConnection(5, testNodeA, testNodeB, 0).weight != expectedConnection.weight {
+		t.Fatalf("Created connection weight did not match expected connection weight")
+	}
+	if CreateConnection(5, testNodeA, testNodeB, 0).nodeA != expectedConnection.nodeA {
+		t.Fatalf("Created connection weight did not match expected connection weight")
+	}
+	if CreateConnection(5, testNodeA, testNodeB, 0).nodeB != expectedConnection.nodeB {
+		t.Fatalf("Created connection weight did not match expected connection weight")
+	}
+	if CreateConnection(5, testNodeA, testNodeB, 0).innovationNumber != expectedConnection.innovationNumber {
+		t.Fatalf("Created connection weight did not match expected connection weight")
+	}
+}
+
 func TestConnection_GetWeight(t *testing.T) {
 	c := Connection{weight: 0.5}
 	if c.weight != 0.5 {

@@ -69,9 +69,8 @@ func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
 		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i] != p.GetChampionSpecies() {
 			newSpecies := &Species{stagnation: 0}
-			for j := range p.GetSpecies() {
-				newSpecies.AddToGenomes(p.GetSpecies()[j].BreedRandomGenomes())
-				newSpecies.AddToGenomes(p.GetSpecies()[j].BreedRandomGenomes())
+			for j := 0; j < len(p.GetChampionSpecies().GetGenomes()); j++ {
+				newSpecies.AddToGenomes(p.GetChampionSpecies().BreedRandomGenomes())
 			}
 
 			sort.Slice(newSpecies.GetGenomes(), func(a, b int) bool {
@@ -79,8 +78,7 @@ func (p *Population) ExtinctionEvent() {
 			})
 
 			newSpecies.SetInnovationCounter(newSpecies.GetGenomes()[0].GetInnovation())
-
-			p.GetSpecies()[i] = newSpecies
+			p.species[i] = newSpecies
 		}
 	}
 }

@@ -1,6 +1,9 @@
 package GoNeat
 
-import "testing"
+import (
+	"log"
+	"testing"
+)
 
 func TestInitPopulation(t *testing.T) {
 	testPop := InitPopulation(5, 3, 3, 5)
@@ -107,5 +110,30 @@ func TestPopulation_GetChampionSpecies(t *testing.T) {
 	testPopulation.SetGrandChampion()
 	if testPopulation.GetChampionSpecies() != testSpeciesOne {
 		t.Fatalf("Expected test species one to be the champion species, but it was not.")
+	}
+}
+
+func TestPopulation_ExtinctionEvent(t *testing.T) {
+	testPop := InitPopulation(1, 1, 2, 1)
+
+	testPop.grandChampion = testPop.species[0].genomes[0]
+
+	testPop.GetSpecies()[0].stagnation = 25
+	testPop.GetSpecies()[1].stagnation = 25
+
+	testPop.ExtinctionEvent()
+
+	for i := range testPop.GetSpecies() {
+		log.Println(testPop.GetSpecies()[i] == testPop.GetChampionSpecies())
+	}
+
+	if len(testPop.GetSpecies()) != 2 {
+		t.Fatalf("Expected 2 species, got %v", len(testPop.GetSpecies()))
+	}
+	if testPop.GetSpecies()[1].GetStagnation() != 0 {
+		t.Fatalf("Expected new species to have stagnation of 0, but it is %v", testPop.GetSpecies()[1].GetStagnation())
+	}
+	if len(testPop.GetAllGenomes()) != 2 {
+		t.Fatalf("Expected the same number of genomes after extinction event, but got %v", len(testPop.GetAllGenomes()))
 	}
 }
