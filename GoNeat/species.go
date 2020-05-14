@@ -168,15 +168,10 @@ func (s *Species) CullTheWeak() {
 }
 
 func (s *Species) BreedRandomGenomes() *Genome {
+	s.SetChampion()
+
 	if len(s.genomes) == 1 {
 		return s.genomes[0].Clone()
 	}
-	genomeIndexOne := 0
-	genomeIndexTwo := 0
-	for genomeIndexOne == genomeIndexTwo {
-		genomeIndexOne = rand.Intn(len(s.genomes))
-		genomeIndexTwo = rand.Intn(len(s.genomes))
-	}
-
-	return BreedGenomes(s.genomes[genomeIndexOne], s.genomes[genomeIndexTwo])
+	return BreedGenomes(s.genomes[rand.Intn(len(s.genomes))], s.champion)
 }
