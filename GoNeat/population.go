@@ -69,13 +69,13 @@ func (p *Population) ExtinctionEvent() {
 	for i := range p.GetSpecies() {
 		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i] != p.GetChampionSpecies() {
 			newSpecies := &Species{stagnation: 0}
-			for i := range p.GetSpecies() {
-				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
-				newSpecies.AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
+			for j := range p.GetSpecies() {
+				newSpecies.AddToGenomes(p.GetSpecies()[j].BreedRandomGenomes())
+				newSpecies.AddToGenomes(p.GetSpecies()[j].BreedRandomGenomes())
 			}
 
-			sort.Slice(newSpecies.GetGenomes(), func(i, j int) bool {
-				return newSpecies.GetGenomes()[i].GetInnovation() > newSpecies.GetGenomes()[j].GetInnovation()
+			sort.Slice(newSpecies.GetGenomes(), func(a, b int) bool {
+				return newSpecies.GetGenomes()[a].GetInnovation() > newSpecies.GetGenomes()[b].GetInnovation()
 			})
 
 			newSpecies.SetInnovationCounter(newSpecies.GetGenomes()[0].GetInnovation())
