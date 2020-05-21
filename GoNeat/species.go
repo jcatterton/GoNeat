@@ -1,7 +1,6 @@
 package GoNeat
 
 import (
-	//"math/rand"
 	"math/rand"
 	"sort"
 )
@@ -14,13 +13,8 @@ type Species struct {
 	innovationCounter int
 }
 
-func InitSpecies(i int, o int, g int) *Species {
-	newGenomes := []*Genome{}
-	for j := 0; j < g; j++ {
-		newGenomes = append(newGenomes, InitGenome(i, o))
-	}
-	newSpecies := &Species{genomes: newGenomes, generation: g, stagnation: 0}
-	return newSpecies
+func InitSpecies(g int) *Species {
+	return &Species{generation: g, stagnation: 0}
 }
 
 func (s *Species) GetGenomes() []*Genome {
@@ -56,6 +50,12 @@ func (s *Species) GetChampion() *Genome {
 }
 
 func (s *Species) SetChampion() {
+	if len(s.genomes) == 0 {
+		s.champion = s.genomes[0]
+		s.champion.mutable = false
+		return
+	}
+
 	if s.GetChampion() == nil {
 		s.champion = s.GetGenomes()[0]
 	}
@@ -154,24 +154,30 @@ func (s *Species) OrderByFitness() {
 }
 
 func (s *Species) CullTheWeak() {
-	weaklingCounter := len(s.GetGenomes()) / 3
-	s.OrderByFitness()
-
-	s.genomes = s.genomes[weaklingCounter:]
-
-	newGenomes := []*Genome{}
-	for i := 0; i < weaklingCounter; i++ {
-		newGenomes = append(newGenomes, s.BreedRandomGenomes())
+	if s.stagnation < 5 && len(s.GetGenomes()) == 1 {
+		return
 	}
 
-	s.genomes = append(s.genomes, newGenomes...)
+	s.OrderByFitness()
+	s.genomes = s.genomes[len(s.GetGenomes())/2:]
 }
 
 func (s *Species) BreedRandomGenomes() *Genome {
 	s.SetChampion()
 
 	if len(s.genomes) == 1 {
-		return s.genomes[0].Clone()
+		newGenome := s.genomes[0].Clone()
+		newGenome.SetMutability(true)
+		return newGenome
 	}
-	return BreedGenomes(s.genomes[rand.Intn(len(s.genomes))], s.champion)
+
+	randGenome := s.genomes[rand.Intn(len(s.genomes))]
+	for randGenome.GetFitness() == 0 {
+		randGenome = s.genomes[rand.Intn(len(s.genomes))]
+	}
+	if rand.Float64() < 0.25 {
+		randGenome.SetMutability(true)
+		return randGenome.Clone()
+	}
+	return BreedGenomes(randGenome, s.champion)
 }

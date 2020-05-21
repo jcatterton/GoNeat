@@ -1,19 +1,18 @@
 package GoNeat
 
 import (
-	"log"
 	"testing"
 )
 
 func TestInitPopulation(t *testing.T) {
-	testPop := InitPopulation(5, 3, 3, 5)
-	if len(testPop.GetSpecies()) != 3 {
-		t.Fatalf("Expected population to initialize with 3 species, got %v", len(testPop.GetSpecies()))
+	testPop := InitPopulation(5, 3, 5)
+	if len(testPop.GetSpecies()) != 1 {
+		t.Fatalf("Expected population to initialize with 1 species, got %v", len(testPop.GetSpecies()))
 	}
 }
 
 func TestPopulation_GetSpecies(t *testing.T) {
-	testSpecies := []*Species{InitSpecies(5, 3, 1)}
+	testSpecies := []*Species{InitSpecies(1)}
 	testPop := &Population{species: testSpecies}
 	if len(testPop.GetSpecies()) != 1 {
 		t.Fatalf("Expected 1 species in test pop, got %v", len(testPop.GetSpecies()))
@@ -24,7 +23,7 @@ func TestPopulation_GetSpecies(t *testing.T) {
 }
 
 func TestPopulation_AddToSpecies(t *testing.T) {
-	testSpecies := InitSpecies(5, 3, 1)
+	testSpecies := InitSpecies(1)
 	testPop := &Population{}
 	testPop.AddToSpecies(testSpecies)
 	if len(testPop.GetSpecies()) != 1 {
@@ -113,27 +112,13 @@ func TestPopulation_GetChampionSpecies(t *testing.T) {
 	}
 }
 
-func TestPopulation_ExtinctionEvent(t *testing.T) {
-	testPop := InitPopulation(1, 1, 2, 1)
+func TestPopulation_FillPopulation(t *testing.T) {
+	testPop := InitPopulation(3, 5, 100)
+	testPop.GetSpecies()[0].genomes = testPop.GetSpecies()[0].genomes[20:]
+	testPop.FillPopulation()
 
-	testPop.grandChampion = testPop.species[0].genomes[0]
-
-	testPop.GetSpecies()[0].stagnation = 25
-	testPop.GetSpecies()[1].stagnation = 25
-
-	testPop.ExtinctionEvent()
-
-	for i := range testPop.GetSpecies() {
-		log.Println(testPop.GetSpecies()[i] == testPop.GetChampionSpecies())
-	}
-
-	if len(testPop.GetSpecies()) != 2 {
-		t.Fatalf("Expected 2 species, got %v", len(testPop.GetSpecies()))
-	}
-	if testPop.GetSpecies()[1].GetStagnation() != 0 {
-		t.Fatalf("Expected new species to have stagnation of 0, but it is %v", testPop.GetSpecies()[1].GetStagnation())
-	}
-	if len(testPop.GetAllGenomes()) != 2 {
-		t.Fatalf("Expected the same number of genomes after extinction event, but got %v", len(testPop.GetAllGenomes()))
+	if len(testPop.GetAllGenomes()) != testPop.GetPopCap() {
+		t.Fatalf("Expected population to be filled to %v, but there are only %v genomes", testPop.GetPopCap(),
+			len(testPop.GetAllGenomes()))
 	}
 }

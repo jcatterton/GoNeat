@@ -162,10 +162,13 @@ func TestSpecies_OrderByFitness(t *testing.T) {
 }
 
 func TestSpecies_CullTheWeak(t *testing.T) {
-	testGenomeOne := &Genome{fitness: 1}
-	testGenomeTwo := &Genome{fitness: 2}
-	testGenomeThree := &Genome{fitness: 3}
-	testSpecies := Species{genomes: []*Genome{testGenomeOne, testGenomeTwo, testGenomeThree}}
+	testGenomeOne := InitGenome(3, 5)
+	testGenomeTwo := InitGenome(3, 5)
+	testGenomeThree := InitGenome(3, 5)
+	testGenomeOne.SetFitness(1.0)
+	testGenomeTwo.SetFitness(2.0)
+	testGenomeThree.SetFitness(3.0)
+	testSpecies := Species{genomes: []*Genome{testGenomeOne, testGenomeTwo, testGenomeThree}, stagnation: 0}
 	testSpecies.CullTheWeak()
 	if len(testSpecies.GetGenomes()) != 3 {
 		t.Fatalf("Expected 3 genomes, got %v", len(testSpecies.GetGenomes()))
@@ -178,21 +181,17 @@ func TestSpecies_CullTheWeak(t *testing.T) {
 	}
 }
 
-func TestInitSpecies(t *testing.T) {
-	testSpecies := InitSpecies(3, 5, 5)
-	if len(testSpecies.GetGenomes()) != 5 {
-		t.Fatalf("Expected species to initalize with 5 genomes, but got %v", len(testSpecies.GetGenomes()))
-	}
-
-	for i := range testSpecies.GetGenomes() {
-		if len(testSpecies.GetGenomes()[i].GetNodesWithLayer(1)) != 3 {
-			t.Fatalf("Expected genomes in initialized species to have 3 inputs, but got %v",
-				len(testSpecies.GetGenomes()[i].GetNodesWithLayer(1)))
-		}
-		if len(testSpecies.GetGenomes()[i].GetNodesWithLayer(testSpecies.GetGenomes()[i].GetLayers())) != 5 {
-			t.Fatalf("Expected genomes in initialized species to have 5 outputs, but got %v",
-				len(testSpecies.GetGenomes()[i].GetNodesWithLayer(testSpecies.GetGenomes()[i].GetLayers())))
-		}
+func TestSpecies_CullTheWeak_ShouldNotReproduceIfStagnationAbove15(t *testing.T) {
+	testGenomeOne := InitGenome(3, 5)
+	testGenomeTwo := InitGenome(3, 5)
+	testGenomeThree := InitGenome(3, 5)
+	testGenomeOne.SetFitness(1.0)
+	testGenomeTwo.SetFitness(2.0)
+	testGenomeThree.SetFitness(3.0)
+	testSpecies := Species{genomes: []*Genome{testGenomeOne, testGenomeTwo, testGenomeThree}, stagnation: 20}
+	testSpecies.CullTheWeak()
+	if len(testSpecies.GetGenomes()) != 2 {
+		t.Fatalf("Expected 2 genomes, got %v", len(testSpecies.GetGenomes()))
 	}
 }
 

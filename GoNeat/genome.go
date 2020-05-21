@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"math"
 	"math/rand"
 	"sort"
 	"time"
@@ -243,27 +244,33 @@ func (g *Genome) Clone() *Genome {
 	newNodes := []*Node{}
 	newConnections := []*Connection{}
 
-	for i := range g.GetNodes() {
-		newNodes = append(newNodes, g.GetNodes()[i].Clone())
-	}
-	for i := range g.GetConnections() {
-		newConnections = append(newConnections, g.GetConnections()[i].Clone())
-	}
-	for i := range g.GetConnections() {
-		newConnections[i].SetNodeA(newNodes[NodeIndex(g.GetNodes(), g.GetConnections()[i].GetNodeA())])
-		newConnections[i].SetNodeB(newNodes[NodeIndex(g.GetNodes(), g.GetConnections()[i].GetNodeB())])
-	}
-	for i := range g.GetNodes() {
-		if len(g.GetNodes()[i].GetOutwardConnections()) > 0 {
-			for j := range g.GetNodes()[i].GetOutwardConnections() {
-				newNodes[i].AddToOutwardConnections(newConnections[ConnectionIndex(g.GetConnections(),
-					g.GetNodes()[i].GetOutwardConnections()[j])])
-			}
+	if len(g.GetNodes()) > 0 {
+		for i := range g.GetNodes() {
+			newNodes = append(newNodes, g.GetNodes()[i].Clone())
 		}
-		if len(g.GetNodes()[i].GetInwardConnections()) > 0 {
-			for j := range g.GetNodes()[i].GetInwardConnections() {
-				newNodes[i].AddToInwardConnections(newConnections[ConnectionIndex(g.GetConnections(),
-					g.GetNodes()[i].GetInwardConnections()[j])])
+	}
+	if len(g.GetConnections()) > 0 {
+		for i := range g.GetConnections() {
+			newConnections = append(newConnections, g.GetConnections()[i].Clone())
+		}
+		for i := range g.GetConnections() {
+			newConnections[i].SetNodeA(newNodes[NodeIndex(g.GetNodes(), g.GetConnections()[i].GetNodeA())])
+			newConnections[i].SetNodeB(newNodes[NodeIndex(g.GetNodes(), g.GetConnections()[i].GetNodeB())])
+		}
+	}
+	if len(g.GetNodes()) > 0 {
+		for i := range g.GetNodes() {
+			if len(g.GetNodes()[i].GetOutwardConnections()) > 0 {
+				for j := range g.GetNodes()[i].GetOutwardConnections() {
+					newNodes[i].AddToOutwardConnections(newConnections[ConnectionIndex(g.GetConnections(),
+						g.GetNodes()[i].GetOutwardConnections()[j])])
+				}
+			}
+			if len(g.GetNodes()[i].GetInwardConnections()) > 0 {
+				for j := range g.GetNodes()[i].GetInwardConnections() {
+					newNodes[i].AddToInwardConnections(newConnections[ConnectionIndex(g.GetConnections(),
+						g.GetNodes()[i].GetInwardConnections()[j])])
+				}
 			}
 		}
 	}
@@ -332,25 +339,34 @@ func (g *Genome) Mutate() int {
 		return 0
 	}
 
-	changes := 0
-	for i := range g.GetConnections() {
-		rand.Seed(time.Now().UTC().UnixNano())
-		if rand.Float64() >= 0.5 {
+	r := rand.Float64()
+	if r <= 0.8 {
+		for i := range g.GetConnections() {
 			rand.Seed(time.Now().UTC().UnixNano())
-			g.GetConnections()[i].SetWeight((rand.Float64() * 2) - 1)
+			if rand.Float64() >= 0.2 {
+				if rand.Float64() >= 0.9 {
+					rand.Seed(time.Now().UTC().UnixNano())
+					g.GetConnections()[i].SetWeight((rand.Float64() * 2) - 1)
+				} else {
+					g.GetConnections()[i].SetWeight((rand.Float64() * (0.2 * g.GetConnections()[i].GetWeight())) - 0.1*g.GetConnections()[i].GetWeight())
+				}
+			}
+		}
+		return 0
+	} else if r > 0.8 && r <= 0.9 {
+		rand.Seed(time.Now().UTC().UnixNano())
+		if rand.Float64() >= 0.2 {
+			g.AddRandomConnection()
+			return 1
+		}
+	} else {
+		rand.Seed(time.Now().UTC().UnixNano())
+		if rand.Float64() >= 0.2 {
+			g.AddRandomNode()
+			return 2
 		}
 	}
-	rand.Seed(time.Now().UTC().UnixNano())
-	if rand.Float64() >= 0.5 {
-		g.AddRandomConnection()
-		changes++
-	}
-	rand.Seed(time.Now().UTC().UnixNano())
-	if rand.Float64() >= 0.75 {
-		g.AddRandomNode()
-		changes = changes + 2
-	}
-	return changes
+	return 0
 }
 
 func (g *Genome) GetOutputs() []float64 {
@@ -409,4 +425,52 @@ func (g *Genome) IsMutable() bool {
 
 func (g *Genome) SetMutability(m bool) {
 	g.mutable = m
+}
+
+func (g *Genome) CompatibleWith(gen *Genome) bool {
+	excessAndDisjoint, averageWeightDiff := g.getExcessDisjointAvgWeightDiff(gen)
+
+	largeGenomeNormaliser := len(g.nodes) + len(g.connections) - 20
+	if largeGenomeNormaliser < 1 {
+		largeGenomeNormaliser = 1
+	}
+
+	excessCoef := 1.0
+	weightDiffCoef := 0.5
+	compatibilityThreshold := 3.0
+
+	compatibility := (excessCoef * excessAndDisjoint / float64(largeGenomeNormaliser)) + (weightDiffCoef * averageWeightDiff)
+	return compatibilityThreshold > compatibility
+}
+
+func (g *Genome) getExcessDisjointAvgWeightDiff(gen *Genome) (float64, float64) {
+	if len(g.nodes) == 0 || len(g.connections) == 0 || len(gen.nodes) == 0 || len(gen.connections) == 0 {
+		return 0, 0
+	}
+
+	matching := 0
+	totalDiff := 0.0
+	for i := range g.nodes {
+		for j := range gen.nodes {
+			if g.nodes[i].innovationNumber == gen.nodes[j].innovationNumber {
+				matching++
+				totalDiff = totalDiff + math.Abs(g.nodes[i].weight-gen.nodes[j].weight)
+				break
+			}
+		}
+	}
+	for i := range g.connections {
+		for j := range gen.connections {
+			if g.connections[i].innovationNumber == gen.connections[j].innovationNumber {
+				matching++
+				totalDiff = totalDiff + math.Abs(g.connections[i].weight-gen.connections[j].weight)
+				break
+			}
+		}
+	}
+	if matching == 0 {
+		return float64(len(g.nodes) + len(g.connections) + len(gen.nodes) + len(gen.connections) - 2*matching), 100
+	}
+
+	return float64(len(g.nodes) + len(g.connections) + len(gen.nodes) + len(gen.connections) - 2*matching), totalDiff / float64(matching)
 }
