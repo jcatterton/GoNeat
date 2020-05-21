@@ -1,4 +1,4 @@
-module github.com/jcatterton/GoNeat
+module GoNeat
 
 go 1.13
 
