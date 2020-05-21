@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="054c1b37-cd0b-40df-9a3c-495e18405eb6" name="Default Changelist" comment="">
+    <list default="true" id="054c1b37-cd0b-40df-9a3c-495e18405eb6" name="Default Changelist" comment="Updated version">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/coverage.out" beforeDir="false" afterPath="$PROJECT_DIR$/coverage.out" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.mod" beforeDir="false" afterPath="$PROJECT_DIR$/go.mod" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/go.sum" beforeDir="false" afterPath="$PROJECT_DIR$/go.sum" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/version.sh" beforeDir="false" afterPath="$PROJECT_DIR$/version.sh" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -31,7 +30,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/version.sh">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="15">
@@ -85,7 +84,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/game/car.go">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="150">
@@ -93,6 +92,15 @@
               <folding>
                 <element signature="e#14#60#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/go.mod">
+          <provider selected="true" editor-type-id="text-editor">
+            <state>
+              <caret column="13" selection-start-column="13" selection-end-column="13" />
             </state>
           </provider>
         </entry>
@@ -196,8 +204,8 @@
         <option value="$PROJECT_DIR$/GoNeat/species.go" />
         <option value="$PROJECT_DIR$/GoNeat/genome.go" />
         <option value="$PROJECT_DIR$/GoNeat/population.go" />
-        <option value="$PROJECT_DIR$/version.sh" />
         <option value="$PROJECT_DIR$/game/game.go" />
+        <option value="$PROJECT_DIR$/version.sh" />
       </list>
     </option>
   </component>
@@ -396,7 +404,7 @@
       <workItem from="1589821577517" duration="6325000" />
       <workItem from="1589908254544" duration="5101000" />
       <workItem from="1589993337170" duration="4117000" />
-      <workItem from="1590068002799" duration="12323000" />
+      <workItem from="1590068002799" duration="12716000" />
     </task>
     <task id="LOCAL-00001" summary="Fixed issue where genomes inputs would be in the wrong order, leading to variable outputs">
       <created>1588365782650</created>
@@ -524,7 +532,14 @@
       <option name="project" value="LOCAL" />
       <updated>1590079812732</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Updated version">
+      <created>1590081759492</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1590081759492</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="TestHistory">
@@ -560,7 +575,7 @@
     </history-entry>
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="235865000" />
+    <option name="totallyTimeSpent" value="236258000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1680" y="0" width="1680" height="1050" extended-state="0" />
@@ -752,13 +767,6 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/game/game/car.go" />
-    <entry file="file://$PROJECT_DIR$/go.mod">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="13" selection-start-column="13" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/saf" />
     <entry file="file://$PROJECT_DIR$/GoNeat/population_test.go">
       <provider selected="true" editor-type-id="text-editor">
@@ -812,13 +820,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/version.sh">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="15">
-          <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/game/fitness_gate.go">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -843,6 +844,20 @@
           <folding>
             <element signature="e#14#60#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/go.mod">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret column="13" selection-start-column="13" selection-end-column="13" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/version.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
         </state>
       </provider>
     </entry>
