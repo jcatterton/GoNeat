@@ -1,6 +1,7 @@
 package GoNeat
 
 import (
+	"fmt"
 	"sort"
 )
 
@@ -14,12 +15,14 @@ type Population struct {
 }
 
 func InitPopulation(i int, o int, g int) *Population {
-	newSpecies := InitSpecies(0)
-	for j := 0; j < g; j++ {
-		newSpecies.AddToGenomes(InitGenome(i, o))
-	}
 	newPopulation := &Population{totalInputs: i, totalOutputs: o, generation: 0, popCap: g}
-	newPopulation.AddToSpecies(newSpecies)
+	for k := 0; k < 4; k++ {
+		newSpecies := InitSpecies(0)
+		for j := 0; j < g/4; j++ {
+			newSpecies.AddToGenomes(InitGenome(i, o))
+		}
+		newPopulation.AddToSpecies(newSpecies)
+	}
 	return newPopulation
 }
 
@@ -80,16 +83,12 @@ func (p *Population) ExtinctionEvent() {
 }
 
 func (p *Population) MatingSeason() {
-	for i := range p.GetSpecies() {
-		if len(p.GetAllGenomes()) < p.popCap && (p.GetSpecies()[i].GetStagnation() < 5 ||
-			p.GetSpecies()[i] == p.GetChampionSpecies()) {
+	for i, s := range p.GetSpecies() {
+		for len(s.genomes) < p.GetPopCap()/len(p.species) {
 			newGenome := p.GetSpecies()[i].BreedRandomGenomes()
 			newGenome.CompatibleWith(p.GetSpecies()[i].GetChampion())
 			newGenome.SetMutability(true)
 			p.GetSpecies()[i].AddToGenomes(newGenome)
-			//p.GetSpecies()[i].AddToGenomes(p.GetSpecies()[i].BreedRandomGenomes())
-		} else if len(p.GetAllGenomes()) == p.popCap {
-			break
 		}
 	}
 	if len(p.GetAllGenomes()) < p.popCap {
@@ -161,11 +160,18 @@ func (p *Population) GetAllGenomes() []*Genome {
 }
 
 func (p *Population) NaturalSelection() {
-	p.SetGrandChampion()
-	//p.Speciate()
 	for i := range p.GetSpecies() {
-		p.GetSpecies()[i].CullTheWeak()
+		if p.GetSpecies()[i].GetStagnation() > 20 && p.GetSpecies()[i].GetChampion().fitness != p.GetGrandChampion().fitness {
+			fmt.Println("A species has gone extinct")
+			p.species[i] = InitSpecies(p.generation)
+			for j := 0; j < p.GetPopCap()/4; j++ {
+				p.species[i].AddToGenomes(InitGenome(p.totalInputs, p.totalOutputs))
+			}
+		}
+		p.GetSpecies()[i].SetChampion()
+		p.GetSpecies()[i].CullTheWeak(false)
 	}
+	p.SetGrandChampion()
 	p.ExtinctionEvent()
 	sort.Slice(p.species, func(i, j int) bool {
 		return p.species[i].GetChampion().GetFitness() < p.species[j].GetChampion().GetFitness()

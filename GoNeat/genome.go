@@ -343,7 +343,7 @@ func (g *Genome) Mutate() int {
 	if r <= 0.8 {
 		for i := range g.GetConnections() {
 			rand.Seed(time.Now().UTC().UnixNano())
-			if rand.Float64() >= 0.2 {
+			if rand.Float64() >= 0.1 {
 				if rand.Float64() >= 0.9 {
 					rand.Seed(time.Now().UTC().UnixNano())
 					g.GetConnections()[i].SetWeight((rand.Float64() * 2) - 1)
@@ -355,13 +355,13 @@ func (g *Genome) Mutate() int {
 		return 0
 	} else if r > 0.8 && r <= 0.9 {
 		rand.Seed(time.Now().UTC().UnixNano())
-		if rand.Float64() >= 0.2 {
+		if rand.Float64() >= 0.1 {
 			g.AddRandomConnection()
 			return 1
 		}
 	} else {
 		rand.Seed(time.Now().UTC().UnixNano())
-		if rand.Float64() >= 0.2 {
+		if rand.Float64() >= 0.1 {
 			g.AddRandomNode()
 			return 2
 		}

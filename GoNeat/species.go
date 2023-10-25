@@ -1,6 +1,8 @@
 package GoNeat
 
 import (
+	"fmt"
+	"math"
 	"math/rand"
 	"sort"
 )
@@ -39,6 +41,7 @@ func (s *Species) GetStagnation() int {
 
 func (s *Species) IncrementStagnation() {
 	s.stagnation = s.stagnation + 1
+	fmt.Println(s.stagnation)
 }
 
 func (s *Species) ResetStagnation() {
@@ -50,7 +53,7 @@ func (s *Species) GetChampion() *Genome {
 }
 
 func (s *Species) SetChampion() {
-	if len(s.genomes) == 0 {
+	if len(s.genomes) == 1 {
 		s.champion = s.genomes[0]
 		s.champion.mutable = false
 		return
@@ -61,17 +64,13 @@ func (s *Species) SetChampion() {
 	}
 	s.champion.SetMutability(false)
 
-	originalFitnessCap := s.champion.GetFitness()
 	for i := range s.GetGenomes() {
 		if s.GetGenomes()[i].GetFitness() > s.champion.GetFitness() {
 			s.champion.SetMutability(true)
 			s.champion = s.GetGenomes()[i]
 			s.champion.SetMutability(false)
+			s.ResetStagnation()
 		}
-	}
-
-	if s.champion.GetFitness() > originalFitnessCap {
-		s.ResetStagnation()
 	}
 }
 
@@ -153,13 +152,11 @@ func (s *Species) OrderByFitness() {
 	})
 }
 
-func (s *Species) CullTheWeak() {
-	if s.stagnation < 5 && len(s.GetGenomes()) == 1 {
-		return
+func (s *Species) CullTheWeak(force bool) {
+	if s.stagnation > 5 || force {
+		s.OrderByFitness()
+		s.genomes = s.genomes[int(math.Floor(float64(len(s.genomes))*0.9)):]
 	}
-
-	s.OrderByFitness()
-	s.genomes = s.genomes[len(s.GetGenomes())/2:]
 }
 
 func (s *Species) BreedRandomGenomes() *Genome {
